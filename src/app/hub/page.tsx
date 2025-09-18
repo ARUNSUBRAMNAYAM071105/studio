@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Youtube, Newspaper, BarChart } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const articles = [
     { id: 1, title: "Eco-Friendly Pest Control for Tomatoes", type: "Article", crop: "Tomato", image: "https://picsum.photos/seed/tomato-pest/600/400", imageHint: "tomato pest" },
