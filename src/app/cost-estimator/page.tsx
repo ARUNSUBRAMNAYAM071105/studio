@@ -5,7 +5,7 @@ import { useTransition, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, CircleDollarSign, Bot, AlertTriangle } from "lucide-react";
+import { Loader2, CircleDollarSign, Bot, AlertTriangle, Database } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +40,7 @@ import {
   GetCostEstimationOutput,
 } from "@/ai/flows/get-cost-estimation";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const costEstimatorSchema = z.object({
   diseaseName: z.string().min(3, "Disease name is required."),
@@ -113,7 +114,7 @@ export default function CostEstimatorPage() {
                     Estimate Remedy Costs
                   </CardTitle>
                   <CardDescription>
-                    Enter a disease and region to get approximate costs for treatment options.
+                    Enter a disease and region to get approximate costs for treatment options from your Firestore database.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -231,12 +232,15 @@ export default function CostEstimatorPage() {
                 </Card>
             )}
              {result && result.remedies.length === 0 && !isPending && (
-                <Card className="w-full h-full flex flex-col items-center justify-center bg-muted/50 border-2 border-dashed">
-                    <Bot className="h-16 w-16 text-muted-foreground" />
-                    <p className="text-muted-foreground mt-4 text-center px-4">
-                     No remedy cost data found for that disease and region. Please check your inputs or try a broader region.
-                    </p>
-                </Card>
+                <Alert>
+                    <Database className="h-4 w-4"/>
+                    <AlertTitle className="font-headline">No Remedy Data Found in Firestore</AlertTitle>
+                    <AlertDescription>
+                        <p>The cost estimator could not find any matching remedies in your Firestore database for the specified disease and region.</p>
+                        <p className="mt-2">To use this feature, please ensure you have a Firestore collection named <strong>`remedies`</strong> with documents containing fields like `diseaseName`, `remedyName`, `region`, `avgCost`, etc.</p>
+                        <p className="mt-2">You can add remedies for a specific region or use "Global" as the region for remedies that apply everywhere. A `sample-remedies.json` file has been added to your project to help you get started.</p>
+                    </AlertDescription>
+                </Alert>
             )}
           </div>
         </div>
