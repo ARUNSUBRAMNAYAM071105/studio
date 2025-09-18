@@ -15,6 +15,7 @@ import {
   BookOpen,
   Users,
   BarChart,
+  CircleDollarSign,
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
@@ -35,6 +36,7 @@ import { Chatbot } from "../chatbot";
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
   { href: "/harvest-predictor", label: "Harvest Predictor", icon: BarChart },
+  { href: "/cost-estimator", label: "Cost Estimator", icon: CircleDollarSign },
   { href: "/knowledge-hub", label: "Knowledge Hub", icon: BookOpen },
   { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Alerts", icon: Bell },
