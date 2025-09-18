@@ -26,6 +26,7 @@ import {
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { Chatbot } from "../chatbot";
 
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
@@ -112,6 +113,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <div className="flex-1">{children}</div>
+       {isLoggedIn && <Chatbot />}
     </div>
   );
 }

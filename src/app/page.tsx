@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/use-local-storage";
+import { useEffect, useState } from "react";
+
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, ScanLine, BookOpen, Bell } from "lucide-react";
+import useLocalStorage from "@/hooks/use-local-storage";
+
 
 const lastScans = [
     { id: 1, date: "2024-07-20", crop: "Tomato", disease: "Late Blight", result: "92% Confidence" },
@@ -25,15 +27,17 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsClient(true);
-    if (isClient && !profile) {
+    // No condition to check for `isClient` because we want this to run on the first client-side render
+    if (!profile) {
       router.push('/login');
     }
-  }, [profile, router, isClient]);
+  }, [profile, router]);
 
   if (!isClient || !profile) {
     // You can render a loading spinner here if you want
     return null; 
   }
+
 
   return (
     <div className="flex flex-1 flex-col">

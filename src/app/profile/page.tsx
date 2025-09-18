@@ -40,24 +40,27 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useLocalStorage<ProfileFormValues>("farmer-profile", {
-    name: "",
-    location: "",
-    landSize: "",
-    crops: "",
-  });
+  const [profile, setProfile] = useLocalStorage<ProfileFormValues | null>("farmer-profile", null);
 
   const { toast } = useToast();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: profile,
+    defaultValues: profile || {
+      name: "",
+      location: "",
+      landSize: "",
+      crops: "",
+    },
   });
   
-  // Keep form in sync with localStorage if it changes in another tab
+  // Keep form in sync with localStorage if it changes
   useEffect(() => {
-    form.reset(profile);
+    if (profile) {
+      form.reset(profile);
+    }
   }, [profile, form]);
+
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {
     setProfile(data);
