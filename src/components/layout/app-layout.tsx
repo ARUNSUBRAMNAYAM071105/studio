@@ -11,6 +11,8 @@ import {
   Bell,
   Menu,
   LineChart,
+  BookOpen,
+  Users,
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
@@ -30,8 +32,10 @@ import { Chatbot } from "../chatbot";
 
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
+  { href: "/advisory", label: "Advisory", icon: BookOpen },
+  { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Alerts", icon: Bell },
-  { href: "/market", label: "Market Analysis", icon: LineChart },
+  { href: "/market", label: "Market", icon: LineChart },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {

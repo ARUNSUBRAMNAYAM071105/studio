@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ScanLine, Bell, LineChart } from "lucide-react";
+import { ArrowRight, ScanLine, Bell, Users, BookOpen } from "lucide-react";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 
@@ -43,7 +43,7 @@ export default function HomePage() {
     <div className="flex flex-1 flex-col">
       <PageHeader title={`Welcome, ${profile.name}!`} />
       <main className="flex-1 p-4 lg:p-6 space-y-6">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
             <ScanLine className="w-12 h-12 text-primary mb-4" />
             <CardTitle className="font-headline">Scan Crop</CardTitle>
@@ -53,14 +53,22 @@ export default function HomePage() {
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
-            <LineChart className="w-12 h-12 text-primary mb-4" />
-            <CardTitle className="font-headline">Market Analysis</CardTitle>
-            <CardDescription className="mb-4">View latest crop prices</CardDescription>
+            <BookOpen className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Advisory Hub</CardTitle>
+            <CardDescription className="mb-4">Sustainable farming guides</CardDescription>
             <Button asChild>
-                <Link href="/market">View Market <ArrowRight className="ml-2"/></Link>
+                <Link href="/advisory">Get Advice <ArrowRight className="ml-2"/></Link>
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
+            <Users className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Community</CardTitle>
+            <CardDescription className="mb-4">Connect with other farmers</CardDescription>
+            <Button asChild>
+                <Link href="/community">Join Forum <ArrowRight className="ml-2"/></Link>
+            </Button>
+          </Card>
+          <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
             <Bell className="w-12 h-12 text-primary mb-4" />
             <CardTitle className="font-headline">Alerts</CardTitle>
             <CardDescription className="mb-4">Check for outbreak warnings</CardDescription>

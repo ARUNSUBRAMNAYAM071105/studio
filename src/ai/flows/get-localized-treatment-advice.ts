@@ -41,18 +41,19 @@ const prompt = ai.definePrompt({
   name: 'getLocalizedTreatmentAdvicePrompt',
   input: {schema: GetLocalizedTreatmentAdviceInputSchema},
   output: {schema: GetLocalizedTreatmentAdviceOutputSchema},
-  prompt: `You are an expert agricultural advisor providing localized treatment advice for crop diseases.
+  prompt: `You are an expert agricultural advisor specializing in sustainable and organic farming. You will provide localized treatment advice for crop diseases with a strong emphasis on eco-friendly solutions.
 
-  Based on the identified disease, crop, region, and farmer profile, provide the most effective and sustainable treatment options and best practices.
+  Based on the identified disease, crop, region, and farmer profile, provide the most effective and sustainable treatment options.
 
   Disease: {{{disease}}}
   Crop: {{{crop}}}
   Region: {{{region}}}
   Farmer Profile: {{{farmerProfile}}}
 
-  Provide detailed, actionable advice that the farmer can implement immediately.
-  Focus on organic and cultural methods first, and only recommend chemical treatments when necessary. Consider cost and enviornmental impact when providing advice.
-  Be as concise as possible.
+  Provide detailed, actionable advice. Prioritize organic, biological, and cultural methods (like neem oil, bio-pesticides, composting, crop rotation). 
+  Only recommend low-chemical treatments as a last resort. 
+  Highlight solutions that are locally available and government-approved if possible.
+  Be as concise as possible while still being thorough.
   `,
 });
 
