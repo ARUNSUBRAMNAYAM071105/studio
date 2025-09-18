@@ -1,3 +1,17 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "upload-placeholder",
+      "description": "A close-up of a green leaf with water droplets.",
+      "imageUrl": "https://picsum.photos/seed/leaf/600/400",
+      "imageHint": "green leaf"
+    },
+    {
+        "id": "dashboard-hero",
+        "description": "A vibrant green farm field under a blue sky.",
+        "imageUrl": "https://picsum.photos/seed/farm/1200/400",
+        "imageHint": "farm field"
+    }
+  ]
 }
