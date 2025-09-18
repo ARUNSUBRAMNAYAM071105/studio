@@ -85,12 +85,7 @@ export default function DiseaseDetectionPage() {
   const [isDiagnosing, startDiagnosisTransition] = useTransition();
   const [isTreating, startTreatmentTransition] = useTransition();
 
-  const [profile] = useLocalStorage<FarmerProfile>("farmer-profile", {
-    name: "",
-    location: "",
-    landSize: "",
-    crops: "",
-  });
+  const [profile] = useLocalStorage<FarmerProfile | null>("farmer-profile", null);
 
   const diagnosisForm = useForm<z.infer<typeof diagnosisSchema>>({
     resolver: zodResolver(diagnosisSchema),
@@ -99,8 +94,8 @@ export default function DiseaseDetectionPage() {
   const treatmentForm = useForm<z.infer<typeof treatmentSchema>>({
     resolver: zodResolver(treatmentSchema),
     defaultValues: {
-      crop: profile.crops.split(',')[0]?.trim() || "",
-      region: profile.location || "",
+      crop: profile?.crops?.split(',')[0]?.trim() || "",
+      region: profile?.location || "",
     },
   });
 
@@ -148,12 +143,12 @@ export default function DiseaseDetectionPage() {
 
     startTreatmentTransition(async () => {
       try {
-        const farmerProfile = `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}`;
+        const farmerProfile = profile ? `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}` : undefined;
         const result = await getLocalizedTreatmentAdvice({
           disease: diagnosis.diseaseName,
           crop: data.crop,
           region: data.region,
-          farmerProfile: farmerProfile.length > 20 ? farmerProfile : undefined,
+          farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
         });
         setTreatment(result);
       } catch (e) {
