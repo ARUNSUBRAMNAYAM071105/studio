@@ -32,7 +32,6 @@ import { Chatbot } from "../chatbot";
 
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
-  { href: "/advisory", label: "Advisory", icon: BookOpen },
   { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Alerts", icon: Bell },
   { href: "/market", label: "Market", icon: LineChart },

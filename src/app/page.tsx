@@ -53,14 +53,6 @@ export default function HomePage() {
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
-            <BookOpen className="w-12 h-12 text-primary mb-4" />
-            <CardTitle className="font-headline">Advisory Hub</CardTitle>
-            <CardDescription className="mb-4">Sustainable farming guides</CardDescription>
-            <Button asChild>
-                <Link href="/advisory">Get Advice <ArrowRight className="ml-2"/></Link>
-            </Button>
-          </Card>
-           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
             <Users className="w-12 h-12 text-primary mb-4" />
             <CardTitle className="font-headline">Community</CardTitle>
             <CardDescription className="mb-4">Connect with other farmers</CardDescription>
