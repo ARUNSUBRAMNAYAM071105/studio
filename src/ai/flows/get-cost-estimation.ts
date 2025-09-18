@@ -9,7 +9,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import {getRemedies} from '@/lib/firebase-service';
 
 const RemedySchema = z.object({
   remedyName: z.string().describe('The name of the remedy.'),
@@ -43,19 +42,19 @@ const getCostEstimationFlow = ai.defineFlow(
     inputSchema: GetCostEstimationInputSchema,
     outputSchema: GetCostEstimationOutputSchema,
   },
-  async ({disease, region}) => {
-    try {
-      const remedies = await getRemedies(disease, region);
-      
-      if (!remedies || remedies.length === 0) {
-        return { remedies: [] };
-      }
+  async ({disease}) => {
+    // Generate 2-3 random remedies for demonstration
+    const randomRemedies = Array.from({ length: Math.floor(Math.random() * 2) + 2 }, (_, i) => {
+        const remedyTypes = ['Chemical', 'Organic', 'Bio-Fungicide'];
+        const units = ['L', 'kg', 'gallon'];
+        return {
+            remedyName: `${disease} Remedy #${i + 1}`,
+            remedyType: remedyTypes[Math.floor(Math.random() * remedyTypes.length)],
+            avgCost: parseFloat((Math.random() * (500 - 50) + 50).toFixed(2)),
+            unit: units[Math.floor(Math.random() * units.length)],
+        }
+    });
 
-      return { remedies };
-    } catch (error) {
-      console.error("Error fetching remedies from Firestore:", error);
-      // Return an empty array in case of an error to prevent the app from crashing.
-      return { remedies: [] };
-    }
+    return { remedies: randomRemedies };
   }
 );
