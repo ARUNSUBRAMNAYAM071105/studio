@@ -37,7 +37,7 @@ const PredictHarvestYieldOutputSchema = z.object({
   potentialMarketPrice: z
     .string()
     .describe(
-      'The potential market price range (e.g., "$200 - $250 per ton"). Include currency and units.'
+      'The potential market price range in Indian Rupees (e.g., "₹200 - ₹250 per ton"). Include currency and units.'
     ),
   confidenceScore: z
     .number()
@@ -75,7 +75,7 @@ Analyze the following information:
 
 Based on this, provide a realistic estimation for the following:
 1.  **Estimated Yield**: Predict the total expected harvest volume.
-2.  **Potential Market Price**: Estimate the likely price range in the specified region's market.
+2.  **Potential Market Price**: Estimate the likely price range in the specified region's market in Indian Rupees (₹).
 3.  **Confidence Score**: Provide a confidence level (0.0 to 1.0) for your prediction.
 4.  **Recommendations**: Offer brief, actionable advice to help the farmer improve their outcome.
 
