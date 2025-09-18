@@ -26,7 +26,7 @@ const articles = [
         imageHint: "vegetable compost"
     },
     {
-        title: "Basics of Organic Pest Management",
+        title: "Basics of Organic Integrated Pest Management",
         source: "Lincoln University",
         overview: "Covers the essential steps for implementing Integrated Pest Management (IPM) in organic farming, focusing on cultural, biological, and mechanical control methods.",
         link: "https://www.lincolnu.edu/_files/publications/basics-of-organic-ipm-gs-18-f-2015.pdf",
