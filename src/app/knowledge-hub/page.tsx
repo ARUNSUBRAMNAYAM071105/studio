@@ -14,7 +14,7 @@ const articles = [
         source: "USDA AMS",
         overview: "A visual representation of best practices in organic pest management, showcasing various techniques and tools used in organic farming.",
         link: "https://www.ams.usda.gov/sites/default/files/media/Organic%20Pest%20Management_FINAL.pdf",
-        image: "https://picsum.photos/seed/organic-pest-management/600/400",
+        image: "https://rodaleinstitute.org/wp-content/uploads/2020/05/Organic-Pest-Management-1024x576.jpg",
         imageHint: "organic pest control",
         tooltip: "Explore sustainable methods for controlling pests in organic farming."
     },
@@ -23,7 +23,7 @@ const articles = [
         source: "Farmwest",
         overview: "An informative guide on setting up composting systems on farms, emphasizing sustainable practices and benefits.",
         link: "https://farmwest.com/wp-content/uploads/2020/09/composting_guide.pdf",
-        image: "https://picsum.photos/seed/farm-composting/600/400",
+        image: "https://www.producer.com/wp-content/uploads/2021/03/composting-1024x576.jpg",
         imageHint: "farm composting guide",
         tooltip: "Learn how to set up cost-effective composting systems on your farm."
     },
