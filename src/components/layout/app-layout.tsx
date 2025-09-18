@@ -2,17 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  ShieldAlert,
-  User,
   LogOut,
-  ChevronDown,
-  BookOpen,
-  Users,
+  User,
   ScanLine,
-  Menu
+  BookOpen,
+  Bell,
+  Menu,
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
@@ -30,12 +28,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 const menuItems = [
-  { href: "/", label: "Home" },
-  { href: "/detect", label: "Detect Disease" },
-  { href: "/hub", label: "Knowledge Hub" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/community", label: "Community" },
-  { href: "/warnings", label: "Early Warnings" },
+  { href: "/detect", label: "Scan Crop", icon: ScanLine },
+  { href: "/hub", label: "Knowledge Hub", icon: BookOpen },
+  { href: "/warnings", label: "Alerts", icon: Bell },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -47,7 +42,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     setIsClient(true);
   }, []);
 
-  const isLoggedIn = profile && profile.name;
+  const isLoggedIn = isClient && profile && profile.name;
 
   if (pathname === '/login' || pathname === '/signup') {
     return <>{children}</>;
@@ -57,21 +52,25 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
-          <AppLogo />
-          <nav className="hidden md:flex md:items-center md:gap-6 text-sm font-medium ml-10">
-            {menuItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`transition-colors hover:text-foreground/80 ${pathname === item.href ? 'text-foreground' : 'text-foreground/60'}`}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <Link href="/" passHref>
+            <AppLogo />
+          </Link>
           <div className="flex flex-1 items-center justify-end gap-4">
-            <nav className="flex items-center gap-2">
-              {isClient && isLoggedIn ? (
+            {isLoggedIn && (
+               <nav className="hidden md:flex md:items-center md:gap-6 text-sm font-medium ml-10">
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`transition-colors hover:text-foreground/80 ${pathname === item.href ? 'text-foreground' : 'text-foreground/60'}`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </nav>
+            )}
+            <div className="flex items-center gap-2">
+              {isLoggedIn ? (
                 <UserDropdown />
               ) : (
                 <>
@@ -83,7 +82,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </Button>
                 </>
               )}
-            </nav>
+            </div>
+            {isLoggedIn && (
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" className="md:hidden">
@@ -100,12 +100,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       href={item.href}
                       className={`flex items-center gap-4 px-2.5 ${pathname === item.href ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'}`}
                     >
+                      <item.icon className="h-5 w-5" />
                       {item.label}
                     </Link>
                   ))}
                 </nav>
               </SheetContent>
             </Sheet>
+            )}
           </div>
         </div>
       </header>
@@ -116,7 +118,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
 function UserDropdown() {
   const [profile, setProfile] = useLocalStorage<{ name: string } | null>("farmer-profile", null);
-  const router = require('next/navigation').useRouter();
+  const router = useRouter();
 
   const handleLogout = () => {
     setProfile(null);

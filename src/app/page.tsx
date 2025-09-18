@@ -1,104 +1,102 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import useLocalStorage from "@/hooks/use-local-storage";
+import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Leaf, Map, Bell } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ArrowRight, ScanLine, BookOpen, Bell } from "lucide-react";
+
+const lastScans = [
+    { id: 1, date: "2024-07-20", crop: "Tomato", disease: "Late Blight", result: "92% Confidence" },
+    { id: 2, date: "2024-07-18", crop: "Maize", disease: "Northern Leaf Blight", result: "88% Confidence" },
+    { id: 3, date: "2024-07-17", crop: "Tomato", disease: "Healthy", result: "99% Confidence" },
+];
+
 
 export default function HomePage() {
+  const [profile] = useLocalStorage<{ name: string } | null>("farmer-profile", null);
+  const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    if (isClient && !profile) {
+      router.push('/login');
+    }
+  }, [profile, router, isClient]);
+
+  if (!isClient || !profile) {
+    // You can render a loading spinner here if you want
+    return null; 
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center text-center bg-hero-gradient">
-          <Image
-            src="https://picsum.photos/seed/farmer-field/1800/1000"
-            alt="Farmer in a field"
-            fill
-            className="object-cover opacity-20"
-            data-ai-hint="farmer field"
-          />
-          <div className="relative z-10 p-4 space-y-4">
-            <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight text-primary">
-              Protect Your Crops, Secure Your Harvest
-            </h1>
-            <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
-              AI-powered disease detection and management for smallholder farmers.
-            </p>
-            <Button asChild size="lg" className="text-lg py-6 px-8">
-              <Link href="/detect">
-                Scan Your Crop Now <ArrowRight className="ml-2" />
-              </Link>
+    <div className="flex flex-1 flex-col">
+      <PageHeader title={`Welcome, ${profile.name}!`} />
+      <main className="flex-1 p-4 lg:p-6 space-y-6">
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
+            <ScanLine className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Scan Crop</CardTitle>
+            <CardDescription className="mb-4">Detect diseases instantly</CardDescription>
+            <Button asChild>
+                <Link href="/detect">Start Scan <ArrowRight className="ml-2"/></Link>
             </Button>
-          </div>
-        </section>
-
-        {/* Explanation Cards Section */}
-        <section className="py-12 md:py-24 bg-background">
-          <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-8">
-              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
-                    <Leaf className="w-10 h-10 text-primary" />
-                  </div>
-                  <CardTitle className="font-headline text-2xl mt-4">Detect Disease</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Upload a photo of your crop to instantly identify diseases with AI-driven accuracy.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
-                    <Map className="w-10 h-10 text-primary" />
-                  </div>
-                  <CardTitle className="font-headline text-2xl mt-4">Get Local Guidance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Receive tailored remedies and eco-friendly tips based on your region and crop type.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader>
-                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
-                    <Bell className="w-10 h-10 text-primary" />
-                  </div>
-                  <CardTitle className="font-headline text-2xl mt-4">Stay Updated</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Get timely weather forecasts and pest alerts to protect your farm proactively.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-secondary border-t">
-        <div className="container mx-auto py-8 px-4 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-            <div className="text-center md:text-left">
-                <p>Contact Us: help@cropsafe.ai | Helpline: +1-800-FARM-AID</p>
-                <p>&copy; {new Date().getFullYear()} CropSafe AI. All Rights Reserved.</p>
-            </div>
-            <div className="flex items-center gap-4 mt-4 md:mt-0">
-                <Link href="/resources" className="hover:text-primary">Resources</Link>
-                <select className="bg-background border border-border rounded-md px-2 py-1">
-                    <option>English</option>
-                    <option>Swahili</option>
-                    <option>Hindi</option>
-                </select>
-            </div>
+          </Card>
+           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
+            <BookOpen className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Knowledge Hub</CardTitle>
+            <CardDescription className="mb-4">Browse articles and guides</CardDescription>
+            <Button asChild>
+                <Link href="/hub">Explore Hub <ArrowRight className="ml-2"/></Link>
+            </Button>
+          </Card>
+           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
+            <Bell className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Alerts</CardTitle>
+            <CardDescription className="mb-4">Check for outbreak warnings</CardDescription>
+            <Button asChild>
+                <Link href="/warnings">View Alerts <ArrowRight className="ml-2"/></Link>
+            </Button>
+          </Card>
         </div>
-      </footer>
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Recent Scans</CardTitle>
+                <CardDescription>Your latest disease detection results.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Crop</TableHead>
+                            <TableHead>Disease</TableHead>
+                            <TableHead>Result</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {lastScans.map((scan) => (
+                            <TableRow key={scan.id}>
+                                <TableCell>{scan.date}</TableCell>
+                                <TableCell>{scan.crop}</TableCell>
+                                <TableCell>
+                                    <Badge variant={scan.disease === 'Healthy' ? 'default' : 'destructive'}>{scan.disease}</Badge>
+                                </TableCell>
+                                <TableCell>{scan.result}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }
