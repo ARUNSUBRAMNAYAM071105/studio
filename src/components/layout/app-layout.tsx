@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -39,6 +40,7 @@ const menuItems = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
   { href: "/harvest-predictor", label: "Harvest Predictor", icon: BarChart },
+  { href: "/cost-estimator", label: "Cost Estimator", icon: CircleDollarSign },
   { href: "/knowledge-hub", label: "Knowledge Hub", icon: BookOpen },
   { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Alerts", icon: Bell },
