@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -46,18 +47,23 @@ export default function ProfilePage() {
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
-    defaultValues: profile || {
-      name: "",
-      location: "",
-      landSize: "",
-      crops: "",
+    defaultValues: {
+      name: profile?.name || "",
+      location: profile?.location || "",
+      landSize: profile?.landSize || "",
+      crops: profile?.crops || "",
     },
   });
   
   // Keep form in sync with localStorage if it changes
   useEffect(() => {
     if (profile) {
-      form.reset(profile);
+      form.reset({
+        name: profile.name || "",
+        location: profile.location || "",
+        landSize: profile.landSize || "",
+        crops: profile.crops || "",
+      });
     }
   }, [profile, form]);
 
