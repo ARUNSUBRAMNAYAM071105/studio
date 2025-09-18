@@ -16,7 +16,6 @@ const ReceiveEarlyDiseaseOutbreakWarningsInputSchema = z.object({
   crop: z.string().describe('The crop type to check for potential diseases.'),
   weatherData: z.string().describe('The current weather data for the region.'),
   regionalReports: z.string().describe('Recent regional disease reports.'),
-  farmerContact: z.string().describe('The farmer contact information (e.g. email address).'),
 });
 export type ReceiveEarlyDiseaseOutbreakWarningsInput = z.infer<typeof ReceiveEarlyDiseaseOutbreakWarningsInputSchema>;
 
@@ -38,20 +37,19 @@ const prompt = ai.definePrompt({
   output: {
     schema: ReceiveEarlyDiseaseOutbreakWarningsOutputSchema,
   },
-  prompt: `You are an AI assistant that analyzes weather data, regional reports, and crop information to predict disease outbreaks and send email alerts to farmers.
+  prompt: `You are an AI assistant that analyzes weather data, regional reports, and crop information to predict disease outbreaks and generate alerts.
 
   Region: {{{region}}}
   Crop: {{{crop}}}
   Weather Data: {{{weatherData}}}
   Regional Reports: {{{regionalReports}}}
-  Farmer Contact: {{{farmerContact}}}
 
-  Analyze the provided data and determine if there is a significant risk of a disease outbreak for the specified crop in the given region. If there is a risk, generate a concise email alert message to warn the farmer about the potential outbreak and suggest proactive measures. If there is no significant risk, indicate that no alert is necessary.
+  Analyze the provided data and determine if there is a significant risk of a disease outbreak for the specified crop in the given region. If there is a risk, generate a concise alert message warning about the potential outbreak and suggest proactive measures. If there is no significant risk, indicate that no alert is necessary.
 
   Respond with JSON format:
   {
-    "alertSent": true/false,  // true if an alert was sent, false otherwise
-    "message": "The email alert message to be sent to the farmer. If no alert is necessary, this is an empty string."
+    "alertSent": true/false,  // true if an alert was generated, false otherwise
+    "message": "The alert message. If no alert is necessary, this is an empty string."
   }`,
 });
 

@@ -41,7 +41,6 @@ const warningSchema = z.object({
   crop: z.string().min(3, "Crop type is required."),
   weatherData: z.string().min(10, "Weather data is required."),
   regionalReports: z.string().min(10, "Regional reports are required."),
-  farmerContact: z.string().email("A valid email address is required."),
 });
 
 type WarningFormValues = z.infer<typeof warningSchema>;
@@ -49,7 +48,6 @@ type WarningFormValues = z.infer<typeof warningSchema>;
 export default function WarningsPage() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] =  useState<ReceiveEarlyDiseaseOutbreakWarningsOutput | null>(null);
-  const [formData, setFormData] = useState<WarningFormValues | null>(null);
   const { toast } = useToast();
 
   const form = useForm<WarningFormValues>({
@@ -59,14 +57,12 @@ export default function WarningsPage() {
         crop: "",
         weatherData: "High humidity (90%) and temperatures around 20-25°C for the past 3 days.",
         regionalReports: "Neighboring farms have reported initial signs of late blight on tomatoes.",
-        farmerContact: "",
     }
   });
 
   const onSubmit: SubmitHandler<WarningFormValues> = (data) => {
     startTransition(async () => {
       setResult(null);
-      setFormData(data);
       try {
         const response = await receiveEarlyDiseaseOutbreakWarnings(data);
         setResult(response);
@@ -154,20 +150,6 @@ export default function WarningsPage() {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="farmerContact"
-                        render={({ field }) => (
-                            <FormItem>
-                            <FormLabel>Farmer Email for Alert</FormLabel>
-                            <FormControl>
-                                <Input type="email" placeholder="e.g., farmer@example.com" {...field} />
-                            </FormControl>
-                            <FormDescription>An email will be simulated for this address.</FormDescription>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                 </CardContent>
                 <CardFooter>
                     <Button type="submit" disabled={isPending}>
@@ -208,11 +190,11 @@ export default function WarningsPage() {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-destructive font-headline flex items-center gap-2"><BellRing /> High Risk Detected</CardTitle>
-                                <CardDescription>An email alert has been simulated for {formData?.farmerContact}.</CardDescription>
+                                <CardDescription>An alert has been generated based on the provided data.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                  <h3 className="font-semibold flex items-center gap-2"><Mail /> Simulated Email Content:</h3>
+                                  <h3 className="font-semibold flex items-center gap-2"><Mail /> Alert Message:</h3>
                                   <div className="p-4 border rounded-md bg-muted text-sm">
                                       {result.message}
                                   </div>
