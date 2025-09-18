@@ -27,7 +27,7 @@ const ChatOutputSchema = z.object({
 export type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
 export async function chatAdvisor(input: ChatInput): Promise<ChatOutput> {
-  const {response: modelResponse} = await ai.generate({
+  const modelResponse = await ai.generate({
     model: 'googleai/gemini-2.5-flash',
     prompt: input.prompt,
     history: input.history,
