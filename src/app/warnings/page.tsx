@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useTransition, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Send, ServerCrash, BellRing, BellOff } from "lucide-react";
+import { Loader2, Send, ServerCrash, BellRing, BellOff, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +49,7 @@ type WarningFormValues = z.infer<typeof warningSchema>;
 export default function WarningsPage() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] =  useState<ReceiveEarlyDiseaseOutbreakWarningsOutput | null>(null);
+  const [formData, setFormData] = useState<WarningFormValues | null>(null);
   const { toast } = useToast();
 
   const form = useForm<WarningFormValues>({
@@ -55,8 +57,8 @@ export default function WarningsPage() {
     defaultValues: {
         region: "",
         crop: "",
-        weatherData: "",
-        regionalReports: "",
+        weatherData: "High humidity (90%) and temperatures around 20-25°C for the past 3 days.",
+        regionalReports: "Neighboring farms have reported initial signs of late blight on tomatoes.",
         farmerContact: "",
     }
   });
@@ -64,6 +66,7 @@ export default function WarningsPage() {
   const onSubmit: SubmitHandler<WarningFormValues> = (data) => {
     startTransition(async () => {
       setResult(null);
+      setFormData(data);
       try {
         const response = await receiveEarlyDiseaseOutbreakWarnings(data);
         setResult(response);
@@ -183,7 +186,7 @@ export default function WarningsPage() {
             </Form>
             </Card>
 
-            <div className="flex items-center justify-center">
+            <div className="flex flex-col gap-6">
                 {isPending && (
                      <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
                         <Loader2 className="h-16 w-16 animate-spin text-primary" />
@@ -193,20 +196,40 @@ export default function WarningsPage() {
                         </p>
                     </div>
                 )}
-                {!isPending && result && (
-                    <Alert variant={result.alertSent ? "destructive" : "default"} className="w-full">
-                         {result.alertSent ? <BellRing className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
-                        <AlertTitle className="font-headline">{result.alertSent ? "High Risk Detected - Alert Sent!" : "Low Risk - No Alert Needed"}</AlertTitle>
-                        <AlertDescription>
-                           {result.alertSent ? result.message : "Our analysis shows no immediate threat of a disease outbreak for the specified crop and region. Continue standard monitoring."}
-                        </AlertDescription>
-                    </Alert>
-                )}
-                 {!isPending && !result && (
+                {!isPending && !result && (
                      <Card className="w-full h-full flex flex-col items-center justify-center bg-muted/50 border-2 border-dashed">
                         <ServerCrash className="h-16 w-16 text-muted-foreground" />
                         <p className="text-muted-foreground mt-4 text-center">Results will be displayed here.</p>
                      </Card>
+                )}
+                {!isPending && result && (
+                  <>
+                    {result.alertSent ? (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-destructive font-headline flex items-center gap-2"><BellRing /> High Risk Detected</CardTitle>
+                                <CardDescription>An email alert has been simulated for {formData?.farmerContact}.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="space-y-2">
+                                  <h3 className="font-semibold flex items-center gap-2"><Mail /> Simulated Email Content:</h3>
+                                  <div className="p-4 border rounded-md bg-muted text-sm">
+                                      {result.message}
+                                  </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="font-headline flex items-center gap-2"><BellOff /> Low Risk - No Alert Sent</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                               <p className="text-muted-foreground">Our analysis shows no immediate threat of a disease outbreak for the specified crop and region. Continue standard monitoring.</p>
+                            </CardContent>
+                        </Card>
+                    )}
+                  </>
                 )}
             </div>
         </div>
