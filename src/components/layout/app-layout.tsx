@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -32,6 +33,7 @@ import { Chatbot } from "../chatbot";
 
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
+  { href: "/knowledge-hub", label: "Knowledge Hub", icon: BookOpen },
   { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Alerts", icon: Bell },
   { href: "/market", label: "Market", icon: LineChart },

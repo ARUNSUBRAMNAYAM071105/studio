@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -50,6 +51,14 @@ export default function HomePage() {
             <CardDescription className="mb-4">Detect diseases instantly</CardDescription>
             <Button asChild>
                 <Link href="/detect">Start Scan <ArrowRight className="ml-2"/></Link>
+            </Button>
+          </Card>
+           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
+            <BookOpen className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Knowledge Hub</CardTitle>
+            <CardDescription className="mb-4">Learn new farming practices</CardDescription>
+            <Button asChild>
+                <Link href="/knowledge-hub">Browse Articles <ArrowRight className="ml-2"/></Link>
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
