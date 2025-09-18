@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +16,8 @@ import {
   Camera,
   Download,
   DollarSign,
+  Video,
+  VideoOff,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -62,6 +65,7 @@ import {
 } from "@/ai/flows/get-cost-estimation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -75,7 +79,7 @@ const diagnosisSchema = z.object({
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
-    ),
+    ).optional(),
 });
 
 const treatmentSchema = z.object({
@@ -103,6 +107,11 @@ export default function DiseaseDetectionPage() {
 
   const [profile] = useLocalStorage<FarmerProfile | null>("farmer-profile", null);
 
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [isCameraOn, setIsCameraOn] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   const diagnosisForm = useForm<z.infer<typeof diagnosisSchema>>({
     resolver: zodResolver(diagnosisSchema),
   });
@@ -114,6 +123,43 @@ export default function DiseaseDetectionPage() {
       region: profile?.location || "",
     },
   });
+
+   useEffect(() => {
+    return () => {
+      // Turn off camera when component unmounts
+      if (videoRef.current && videoRef.current.srcObject) {
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  const enableCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      setHasCameraPermission(true);
+      setIsCameraOn(true);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setHasCameraPermission(false);
+      toast({
+        variant: "destructive",
+        title: "Camera Access Denied",
+        description: "Please enable camera permissions in your browser settings.",
+      });
+    }
+  };
+
+  const disableCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraOn(false);
+  };
+  
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -127,6 +173,26 @@ export default function DiseaseDetectionPage() {
         setError(null);
       };
       reader.readAsDataURL(file);
+    }
+  };
+  
+  const takePicture = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if(context){
+        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        const dataUri = canvas.toDataURL('image/jpeg');
+        setPreview(dataUri);
+        disableCamera();
+        setDiagnosis(null);
+        setTreatment(null);
+        setCostEstimation(null);
+        setError(null);
+      }
     }
   };
 
@@ -208,49 +274,82 @@ export default function DiseaseDetectionPage() {
           <CardHeader>
             <CardTitle className="font-headline text-3xl">Scan Your Crop</CardTitle>
             <CardDescription>
-              Upload a photo of an affected plant to get an instant AI-powered diagnosis.
+              Use your device's camera or upload a photo to get an instant AI-powered diagnosis.
             </CardDescription>
           </CardHeader>
           <Form {...diagnosisForm}>
             <form onSubmit={diagnosisForm.handleSubmit(onDiagnosisSubmit)}>
               <CardContent className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="aspect-video w-full relative overflow-hidden rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
-                    {preview ? (
-                      <Image
-                        src={preview}
-                        alt="Plant preview"
-                        fill
-                        className="object-contain"
-                      />
-                    ) : (
-                      <div className="text-center text-muted-foreground z-10 p-4 flex flex-col items-center">
-                          <Camera className="mx-auto h-16 w-16" />
-                          <p className="font-semibold mt-4">Take or upload a photo</p>
-                          <p className="text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
-                      </div>
-                    )}
-                  </div>
-                   <FormField
-                    control={diagnosisForm.control}
-                    name="image"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            className="text-lg p-2"
-                            onChange={(e) => {
-                              field.onChange(e.target.files);
-                              handleImageChange(e);
-                            }}
+                  <Tabs defaultValue="upload">
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="upload" onClick={disableCamera}><UploadCloud className="mr-2"/> Upload</TabsTrigger>
+                        <TabsTrigger value="camera" onClick={enableCamera}><Camera className="mr-2"/> Camera</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="upload">
+                         <div className="aspect-video w-full relative overflow-hidden rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
+                            {preview ? (
+                              <Image
+                                src={preview}
+                                alt="Plant preview"
+                                fill
+                                className="object-contain"
+                              />
+                            ) : (
+                              <div className="text-center text-muted-foreground z-10 p-4 flex flex-col items-center">
+                                  <UploadCloud className="mx-auto h-16 w-16" />
+                                  <p className="font-semibold mt-4">Upload a photo</p>
+                                  <p className="text-xs mt-1">PNG, JPG, WEBP up to 5MB</p>
+                              </div>
+                            )}
+                          </div>
+                          <FormField
+                            control={diagnosisForm.control}
+                            name="image"
+                            render={({ field }) => (
+                              <FormItem className="mt-4">
+                                <FormControl>
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    className="text-lg p-2"
+                                    onChange={(e) => {
+                                      field.onChange(e.target.files);
+                                      handleImageChange(e);
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    </TabsContent>
+                    <TabsContent value="camera">
+                        <div className="space-y-4">
+                             <div className="aspect-video w-full relative overflow-hidden rounded-lg border-2 bg-black flex items-center justify-center">
+                                {isCameraOn ? (
+                                    <video ref={videoRef} className="w-full h-full object-cover" autoPlay playsInline muted />
+                                ) : (
+                                    <div className="text-center text-muted-foreground z-10 p-4 flex flex-col items-center">
+                                        <VideoOff className="mx-auto h-16 w-16" />
+                                        <p className="font-semibold mt-4">Camera is off</p>
+                                        <p className="text-xs mt-1">Click the Camera tab to start.</p>
+                                    </div>
+                                )}
+                                 { hasCameraPermission === false && (
+                                    <Alert variant="destructive" className="absolute bottom-4 left-4 right-4 w-auto">
+                                        <AlertTitle>Camera Access Denied</AlertTitle>
+                                        <AlertDescription>Please enable camera access in your browser settings.</AlertDescription>
+                                    </Alert>
+                                )}
+                             </div>
+                             <Button onClick={takePicture} type="button" disabled={!isCameraOn} className="w-full">
+                                <Camera className="mr-2"/> Take Picture
+                             </Button>
+                        </div>
+                    </TabsContent>
+                  </Tabs>
+                   <canvas ref={canvasRef} className="hidden" />
                 </div>
                 <div className="flex flex-col space-y-4">
                   {isDiagnosing && (
@@ -293,6 +392,20 @@ export default function DiseaseDetectionPage() {
                     </Card>
                   )}
 
+                  {!isDiagnosing && !diagnosis && preview && (
+                     <Card className="flex-1">
+                         <CardHeader>
+                            <CardTitle>Image Preview</CardTitle>
+                         </CardHeader>
+                        <CardContent>
+                             <Image src={preview} alt="Image preview" width={600} height={400} className="rounded-md object-cover w-full aspect-video"/>
+                        </CardContent>
+                         <CardFooter>
+                            <p className="text-sm text-muted-foreground">Click "Diagnose Plant" to analyze this image.</p>
+                         </CardFooter>
+                     </Card>
+                  )}
+                  
                   {!isDiagnosing && error && !diagnosis && (
                     <div className="flex flex-col items-center justify-center h-full space-y-4 text-center text-destructive">
                       <AlertTriangle className="h-16 w-16" />
@@ -436,6 +549,7 @@ export default function DiseaseDetectionPage() {
                                 {costEstimation.remedies.map((remedy, index) => (
                                     <TableRow key={index}>
                                         <TableCell className="font-medium">{remedy.remedyName}</TableCell>
+
                                         <TableCell>{remedy.remedyType}</TableCell>
                                         <TableCell className="text-right font-mono">
                                             ₹{remedy.avgCost.toFixed(2)} / {remedy.unit}
@@ -462,3 +576,5 @@ export default function DiseaseDetectionPage() {
     </div>
   );
 }
+
+    
