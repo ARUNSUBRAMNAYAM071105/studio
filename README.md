@@ -47,14 +47,7 @@ Copy the following content into your `.env` file and replace the placeholder val
 # Get yours from Google AI Studio: https://aistudio.google.com/app/apikey
 GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 
-# Firebase Configuration (Optional - for custom Firebase backend)
-# You can get these from your Firebase project settings.
-NEXT_PUBLIC_FIREBASE_API_KEY="your-api-key"
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="your-project-id.firebaseapp.com"
-NEXT_PUBLIC_FIREBASE_PROJECT_ID="your-project-id"
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="your-project-id.appspot.com"
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
-NEXT_PUBLIC_FIREBASE_APP_ID="your-app-id"
+
 ```
 
 **Note:** The `GEMINI_API_KEY` is required for the AI features to work.
