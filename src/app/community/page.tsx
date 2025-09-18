@@ -1,14 +1,16 @@
 
 "use client";
 
+import { useState } from "react";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, ThumbsUp, UserPlus } from "lucide-react";
+import useLocalStorage from "@/hooks/use-local-storage";
 
-const posts = [
+const initialPosts = [
     {
         id: 1,
         author: "Juma Omondi",
@@ -101,7 +103,34 @@ const posts = [
     }
 ];
 
+type FarmerProfile = {
+  name: string;
+};
+
+
 export default function CommunityPage() {
+    const [posts, setPosts] = useState(initialPosts);
+    const [newPostContent, setNewPostContent] = useState("");
+    const [profile] = useLocalStorage<FarmerProfile | null>("farmer-profile", null);
+    
+    const handlePost = () => {
+        if (!newPostContent.trim()) return;
+
+        const newPost = {
+            id: Date.now(),
+            author: profile?.name || "Anonymous",
+            avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
+            time: "Just now",
+            content: newPostContent,
+            likes: 0,
+            comments: 0,
+        };
+
+        setPosts([newPost, ...posts]);
+        setNewPostContent("");
+    };
+
+
     return (
         <div className="flex flex-1 flex-col">
             <PageHeader title="Farmer Community" />
@@ -115,10 +144,16 @@ export default function CommunityPage() {
                         <div className="flex gap-4">
                             <Avatar>
                                 <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
-                                <AvatarFallback>U</AvatarFallback>
+                                <AvatarFallback>{profile?.name?.charAt(0) || 'U'}</AvatarFallback>
                             </Avatar>
-                            <Input placeholder="Share your knowledge or ask a question..." className="flex-1" />
-                            <Button>Post</Button>
+                            <Input 
+                                placeholder="Share your knowledge or ask a question..." 
+                                className="flex-1" 
+                                value={newPostContent}
+                                onChange={(e) => setNewPostContent(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handlePost()}
+                            />
+                            <Button onClick={handlePost}>Post</Button>
                         </div>
                     </CardContent>
                 </Card>
