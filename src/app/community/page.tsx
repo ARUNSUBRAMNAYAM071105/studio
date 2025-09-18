@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -115,6 +115,11 @@ export default function CommunityPage() {
     
     const [followedAuthors, setFollowedAuthors] = useState<string[]>([]);
     const [likedPosts, setLikedPosts] = useState<number[]>([]);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const handlePost = () => {
         if (!newPostContent.trim()) return;
@@ -171,7 +176,7 @@ export default function CommunityPage() {
                         <div className="flex gap-4">
                             <Avatar>
                                 <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
-                                <AvatarFallback>{profile?.name?.charAt(0) || 'U'}</AvatarFallback>
+                                <AvatarFallback>{isClient ? profile?.name?.charAt(0) || 'U' : null}</AvatarFallback>
                             </Avatar>
                             <Input 
                                 placeholder="Share your knowledge or ask a question..." 
