@@ -14,6 +14,7 @@ import {
   Leaf,
   Camera,
   Download,
+  DollarSign,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -55,7 +56,13 @@ import {
   getLocalizedTreatmentAdvice,
   GetLocalizedTreatmentAdviceOutput,
 } from "@/ai/flows/get-localized-treatment-advice";
+import {
+    getCostEstimation,
+    GetCostEstimationOutput,
+} from "@/ai/flows/get-cost-estimation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -87,6 +94,7 @@ export default function DiseaseDetectionPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState<DiagnosePlantOutput | null>(null);
   const [treatment, setTreatment] = useState<GetLocalizedTreatmentAdviceOutput | null>(null);
+  const [costEstimation, setCostEstimation] = useState<GetCostEstimationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -115,6 +123,7 @@ export default function DiseaseDetectionPage() {
         setPreview(reader.result as string);
         setDiagnosis(null);
         setTreatment(null);
+        setCostEstimation(null);
         setError(null);
       };
       reader.readAsDataURL(file);
@@ -128,6 +137,7 @@ export default function DiseaseDetectionPage() {
       try {
         setDiagnosis(null);
         setTreatment(null);
+        setCostEstimation(null);
         setError(null);
         const result = await diagnosePlant({ photoDataUri: preview });
         setDiagnosis(result);
@@ -155,25 +165,34 @@ export default function DiseaseDetectionPage() {
     startTreatmentTransition(async () => {
       try {
         setTreatment(null);
+        setCostEstimation(null);
+        setError(null);
 
         const farmerProfile = profile ? `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}` : undefined;
         
-        const treatmentResult = await getLocalizedTreatmentAdvice({
-            disease: diagnosis.diagnosis.diagnosis,
-            crop: data.crop,
-            region: data.region,
-            farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
-          });
+        const [treatmentResult, costResult] = await Promise.all([
+             getLocalizedTreatmentAdvice({
+                disease: diagnosis.diagnosis.diagnosis,
+                crop: data.crop,
+                region: data.region,
+                farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
+            }),
+            getCostEstimation({
+                disease: diagnosis.diagnosis.diagnosis,
+                region: data.region
+            })
+        ]);
 
         setTreatment(treatmentResult);
+        setCostEstimation(costResult);
 
       } catch (e) {
         console.error(e);
-        setError("Failed to get treatment advice. Please try again.");
+        setError("Failed to get treatment advice or cost estimation. Please try again.");
         toast({
           variant: "destructive",
           title: "Error",
-          description: "An unexpected error occurred while fetching advice.",
+          description: "An unexpected error occurred while fetching details.",
         });
       }
     });
@@ -305,7 +324,7 @@ export default function DiseaseDetectionPage() {
                 <Syringe /> Get Localized Treatment Advice
               </CardTitle>
               <CardDescription>
-                Provide your crop type and region for tailored recommendations.
+                Provide your crop type and region for tailored recommendations and cost estimates.
               </CardDescription>
             </CardHeader>
             <Form {...treatmentForm}>
@@ -360,13 +379,13 @@ export default function DiseaseDetectionPage() {
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
               <p className="font-semibold text-lg">Generating your custom plan...</p>
               <p className="text-muted-foreground">
-                We're consulting our digital agronomist.
+                We're consulting our digital agronomist and checking local prices.
               </p>
             </CardContent>
           </Card>
         )}
-
-        {error && treatment && (
+        
+        {error && (treatment || costEstimation) && (
             <Card>
                 <CardContent>
                     <div className="flex flex-col items-center justify-center h-full space-y-4 text-center text-destructive p-6">
@@ -392,6 +411,53 @@ export default function DiseaseDetectionPage() {
             </CardContent>
           </Card>
         )}
+
+        {costEstimation && (
+            <Card>
+                <CardHeader>
+                    <CardTitle className="font-headline flex items-center gap-2">
+                        <DollarSign /> Remedy Cost Estimator
+                    </CardTitle>
+                    <CardDescription>
+                        Estimated costs for remedies in your region. Prices may vary.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {costEstimation.remedies && costEstimation.remedies.length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Remedy</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead className="text-right">Estimated Cost</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {costEstimation.remedies.map((remedy, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell className="font-medium">{remedy.remedyName}</TableCell>
+                                        <TableCell>{remedy.remedyType}</TableCell>
+                                        <TableCell className="text-right font-mono">
+                                            ₹{remedy.avgCost.toFixed(2)} / {remedy.unit}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    ) : (
+                       <Alert>
+                            <AlertTriangle className="h-4 w-4"/>
+                            <AlertTitle>No Cost Data Found</AlertTitle>
+                            <AlertDescription>
+                                We couldn't find any cost estimations for this disease in your specified region. 
+                                This may be because our database does not yet have pricing for your area, or the remedy data has not been added to your Firestore 'remedies' collection.
+                            </AlertDescription>
+                       </Alert>
+                    )}
+                </CardContent>
+            </Card>
+        )}
+
       </main>
     </div>
   );

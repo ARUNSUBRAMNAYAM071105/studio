@@ -24,6 +24,10 @@ type Remedy = {
  * @returns A promise that resolves to an array of Remedy objects.
  */
 export async function getRemedies(diseaseName: string, region: string): Promise<Omit<Remedy, 'diseaseName' | 'region'>[]> {
+  if (!db) {
+    console.error("Firestore is not initialized.");
+    return [];
+  }
   const remediesCol = collection(db, "remedies");
   
   // Create a query to find remedies matching the disease and either the specific region or "Global"
