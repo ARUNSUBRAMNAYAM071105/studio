@@ -40,7 +40,7 @@ const warningSchema = z.object({
   crop: z.string().min(3, "Crop type is required."),
   weatherData: z.string().min(10, "Weather data is required."),
   regionalReports: z.string().min(10, "Regional reports are required."),
-  farmerContact: z.string().min(5, "A contact method is required (e.g., phone number)."),
+  farmerContact: z.string().email("A valid email address is required."),
 });
 
 type WarningFormValues = z.infer<typeof warningSchema>;
@@ -156,11 +156,11 @@ export default function WarningsPage() {
                         name="farmerContact"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Farmer Contact for Alert</FormLabel>
+                            <FormLabel>Farmer Email for Alert</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g., +1234567890" {...field} />
+                                <Input type="email" placeholder="e.g., farmer@example.com" {...field} />
                             </FormControl>
-                            <FormDescription>An SMS will be simulated for this contact.</FormDescription>
+                            <FormDescription>An email will be simulated for this address.</FormDescription>
                             <FormMessage />
                             </FormItem>
                         )}
