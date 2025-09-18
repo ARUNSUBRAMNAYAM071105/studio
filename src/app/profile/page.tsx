@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -54,7 +55,9 @@ export default function ProfilePage() {
   });
   
   // Keep form in sync with localStorage if it changes in another tab
-  form.reset(profile);
+  useEffect(() => {
+    form.reset(profile);
+  }, [profile, form]);
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {
     setProfile(data);
