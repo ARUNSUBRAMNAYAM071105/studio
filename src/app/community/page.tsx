@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, ThumbsUp, UserPlus } from "lucide-react";
+import { MessageSquare, ThumbsUp, UserPlus, Check } from "lucide-react";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 const initialPosts = [
@@ -113,6 +113,9 @@ export default function CommunityPage() {
     const [newPostContent, setNewPostContent] = useState("");
     const [profile] = useLocalStorage<FarmerProfile | null>("farmer-profile", null);
     
+    const [followedAuthors, setFollowedAuthors] = useState<string[]>([]);
+    const [likedPosts, setLikedPosts] = useState<number[]>([]);
+
     const handlePost = () => {
         if (!newPostContent.trim()) return;
 
@@ -130,6 +133,30 @@ export default function CommunityPage() {
         setNewPostContent("");
     };
 
+    const handleFollow = (author: string) => {
+        setFollowedAuthors(prev => 
+            prev.includes(author) ? prev.filter(a => a !== author) : [...prev, author]
+        );
+    };
+
+    const handleLike = (postId: number) => {
+        if (likedPosts.includes(postId)) return; // Prevent multiple likes
+
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
+                post.id === postId ? { ...post, likes: post.likes + 1 } : post
+            )
+        );
+        setLikedPosts(prev => [...prev, postId]);
+    };
+    
+    const handleComment = (postId: number) => {
+        setPosts(prevPosts =>
+            prevPosts.map(post =>
+                post.id === postId ? { ...post, comments: post.comments + 1 } : post
+            )
+        );
+    };
 
     return (
         <div className="flex flex-1 flex-col">
@@ -171,8 +198,21 @@ export default function CommunityPage() {
                                         <p className="font-semibold">{post.author}</p>
                                         <p className="text-xs text-muted-foreground">{post.time}</p>
                                     </div>
-                                    <Button variant="link" size="sm" className="p-0 h-auto text-primary">
-                                        <UserPlus className="mr-1" /> Follow
+                                    <Button 
+                                        variant="link" 
+                                        size="sm" 
+                                        className="p-0 h-auto text-primary"
+                                        onClick={() => handleFollow(post.author)}
+                                    >
+                                        {followedAuthors.includes(post.author) ? (
+                                            <>
+                                                <Check className="mr-1" /> Following
+                                            </>
+                                        ) : (
+                                            <>
+                                                <UserPlus className="mr-1" /> Follow
+                                            </>
+                                        )}
                                     </Button>
                                 </div>
                             </CardHeader>
@@ -180,10 +220,19 @@ export default function CommunityPage() {
                                 <p className="text-sm">{post.content}</p>
                             </CardContent>
                             <CardFooter className="flex gap-4">
-                                <Button variant="ghost" size="sm">
+                                <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={() => handleLike(post.id)}
+                                    disabled={likedPosts.includes(post.id)}
+                                >
                                     <ThumbsUp className="mr-2" /> {post.likes}
                                 </Button>
-                                <Button variant="ghost" size="sm">
+                                <Button 
+                                    variant="ghost" 
+                                    size="sm"
+                                    onClick={() => handleComment(post.id)}
+                                >
                                     <MessageSquare className="mr-2" /> {post.comments}
                                 </Button>
                             </CardFooter>
