@@ -30,6 +30,15 @@ const initialPosts = [
         comments: 8,
     },
     {
+        id: 11,
+        author: "Ananya Sharma",
+        avatar: "https://picsum.photos/seed/ananya/100/100",
+        time: "1 day ago",
+        content: "Just got my soil test results back. pH is slightly acidic. Any organic recommendations to raise it before planting my vegetables?",
+        likes: 19,
+        comments: 7,
+    },
+    {
         id: 3,
         author: "Samuel Kariuki",
         avatar: "https://picsum.photos/seed/samuel/100/100",
@@ -37,6 +46,15 @@ const initialPosts = [
         content: "My tomatoes are suffering from blossom end rot. Besides calcium, what are some other organic solutions I can try? The soil pH is around 6.5.",
         likes: 8,
         comments: 5,
+    },
+    {
+        id: 12,
+        author: "Bosede Adeyemi",
+        avatar: "https://picsum.photos/seed/bosede/100/100",
+        time: "4 days ago",
+        content: "Thinking about investing in a solar-powered water pump for my 2-acre farm. Has anyone made the switch? Was it worth the initial cost?",
+        likes: 33,
+        comments: 14,
     },
     {
         id: 4,
@@ -65,6 +83,15 @@ const initialPosts = [
         likes: 22,
         comments: 9,
     },
+     {
+        id: 13,
+        author: "Rajesh Kumar",
+        avatar: "https://picsum.photos/seed/rajesh/100/100",
+        time: "1 week ago",
+        content: "The monsoon has been delayed in my region. What are some drought-resistant crops I can plant for the next cycle? Currently growing cotton and wheat.",
+        likes: 41,
+        comments: 18,
+    },
     {
         id: 7,
         author: "Kenpachi Ramaswamy",
@@ -84,6 +111,15 @@ const initialPosts = [
         comments: 20,
     },
     {
+        id: 14,
+        author: "Isabella Rossi",
+        avatar: "https://picsum.photos/seed/isabella/100/100",
+        time: "3 weeks ago",
+        content: "I've started keeping bees on my farm for pollination. My fruit yields have already increased by 20%! Plus, fresh honey is a great bonus.",
+        likes: 62,
+        comments: 25,
+    },
+    {
         id: 9,
         author: "John Doe",
         avatar: "https://picsum.photos/seed/johnd/100/100",
@@ -100,6 +136,15 @@ const initialPosts = [
         content: "How do you manage waterlogging in clay soil during the rainy season? My fields are getting swamped, and I'm worried about root rot.",
         likes: 28,
         comments: 12,
+    },
+    {
+        id: 15,
+        author: "Wei Li",
+        avatar: "https://picsum.photos/seed/wei/100/100",
+        time: "1 month ago",
+        content: "I'm having trouble with birds eating my sunflower seeds. Besides netting, are there any effective, natural deterrents?",
+        likes: 24,
+        comments: 10,
     }
 ];
 
@@ -176,7 +221,7 @@ export default function CommunityPage() {
                         <div className="flex gap-4">
                             <Avatar>
                                 <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
-                                <AvatarFallback>{isClient ? profile?.name?.charAt(0) || 'U' : null}</AvatarFallback>
+                                <AvatarFallback>{isClient ? (profile?.name?.charAt(0) || 'U') : null}</AvatarFallback>
                             </Avatar>
                             <Input 
                                 placeholder="Share your knowledge or ask a question..." 
@@ -248,3 +293,5 @@ export default function CommunityPage() {
         </div>
     );
 }
+
+    

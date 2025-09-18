@@ -36,6 +36,11 @@ const cropPrices = [
     { crop: 'Ginger', price: 150, unit: 'kg', change: -5.0, trend: 'down' },
     { crop: 'Garlic', price: 200, unit: 'kg', change: 10.0, trend: 'up' },
     { crop: 'Turmeric', price: 90, unit: 'kg', change: 1.2, trend: 'up' },
+    { crop: 'Jowar (Sorghum)', price: 28, unit: 'kg', change: 0.7, trend: 'up' },
+    { crop: 'Bajra (Pearl Millet)', price: 25, unit: 'kg', change: -0.3, trend: 'down' },
+    { crop: 'Ragi (Finger Millet)', price: 35, unit: 'kg', change: 1.0, trend: 'up' },
+    { crop: 'Mango (Alphonso)', price: 150, unit: 'kg', change: 5.5, trend: 'up' },
+    { crop: 'Tea Leaves', price: 250, unit: 'kg', change: -2.0, trend: 'down' }
 ];
 
 export default function MarketAnalysisPage() {
@@ -86,3 +91,5 @@ export default function MarketAnalysisPage() {
         </div>
     );
 }
+
+    
