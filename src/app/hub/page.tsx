@@ -10,19 +10,18 @@ import { Search, Youtube, Newspaper, BarChart, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const allArticles = [
-    { id: 1, title: "Eco-Friendly Pest Control for Tomatoes", type: "Article", crop: "Tomato", image: "https://picsum.photos/seed/tomato-pest/600/400", imageHint: "tomato pest" },
-    { id: 2, title: "Identifying Maize Leaf Blight (Video)", type: "Video", crop: "Maize", image: "https://picsum.photos/seed/maize-blight/600/400", imageHint: "maize blight" },
-    { id: 3, title: "Crop Rotation Best Practices", type: "Infographic", crop: "All", image: "https://picsum.photos/seed/crop-rotation/600/400", imageHint: "crop rotation" },
-    { id: 4, title: "Understanding Late Blight in Potatoes", type: "Article", crop: "Potato", image: "https://picsum.photos/seed/potato-blight/600/400", imageHint: "potato blight" },
-    { id: 5, title: "Soil Health Explained (Video)", type: "Video", crop: "All", image: "https://picsum.photos/seed/soil-health/600/400", imageHint: "soil health" },
-    { id: 6, title: "Water Management for Wheat Crops", type: "Infographic", crop: "Wheat", image: "https://picsum.photos/seed/water-manage/600/400", imageHint: "water management" },
-    { id: 7, title: "Growing Guide for Bell Peppers", type: "Article", crop: "Pepper", image: "https://picsum.photos/seed/bell-pepper/600/400", imageHint: "bell peppers" },
-    { id: 8, title: "Integrated Pest Management for Soybeans", type: "Article", crop: "Soybean", image: "https://picsum.photos/seed/soybean-pest/600/400", imageHint: "soybean field" },
-    { id: 9, title: "Common Rust in Corn: Identification and Treatment", type: "Video", crop: "Maize", image: "https://picsum.photos/seed/corn-rust/600/400", imageHint: "corn rust" },
-    { id: 10, title: "Nutrient Management for Grapes", type: "Infographic", crop: "Grape", image: "https://picsum.photos/seed/grape-nutrient/600/400", imageHint: "vineyard grapes" },
+    { id: 1, title: "Common Plant Diseases and Their Best Organic Remedies", type: "Article", crop: "All", image: "https://picsum.photos/seed/organic-remedy/600/400", imageHint: "organic remedy" },
+    { id: 2, title: "Effects of climate change on plant pathogens", type: "Article", crop: "All", image: "https://picsum.photos/seed/climate-pathogen/600/400", imageHint: "dry field" },
+    { id: 3, title: "How weather influences fungal and oomycete crop disease", type: "Article", crop: "All", image: "https://picsum.photos/seed/weather-fungus/600/400", imageHint: "stormy field" },
+    { id: 4, title: "Biological Control of Plant Diseases: An Evolutionary Approach", type: "Article", crop: "All", image: "https://picsum.photos/seed/bio-control/600/400", imageHint: "ladybug leaf" },
+    { id: 5, title: "Soilborne Disease Management in Organic Vegetable Production", type: "Article", crop: "Vegetable", image: "https://picsum.photos/seed/soil-disease/600/400", imageHint: "vegetable soil" },
+    { id: 6, title: "Plant Diseases: What You Need to Know to Prevent Spread", type: "Article", crop: "All", image: "https://picsum.photos/seed/prevent-spread/600/400", imageHint: "healthy plants" },
+    { id: 7, title: "How Plant Diseases Reduce Crop Yields & Proven Practices", type: "Article", crop: "All", image: "https://picsum.photos/seed/crop-yield/600/400", imageHint: "low yield" },
+    { id: 8, title: "Growing Guide for Bell Peppers", type: "Article", crop: "Pepper", image: "https://picsum.photos/seed/bell-pepper/600/400", imageHint: "bell peppers" },
+    { id: 9, title: "Nutrient Management for Grapes", type: "Infographic", crop: "Grape", image: "https://picsum.photos/seed/grape-nutrient/600/400", imageHint: "vineyard grapes" },
 ];
 
-const cropTypes = ["All", "Tomato", "Maize", "Potato", "Wheat", "Pepper", "Soybean", "Grape"];
+const cropTypes = ["All", "Vegetable", "Pepper", "Grape"];
 
 
 const TypeIcon = ({ type, className }: { type: string, className?: string }) => {
