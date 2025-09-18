@@ -14,8 +14,8 @@ const articles = [
         source: "USDA AMS",
         overview: "A visual representation of best practices in organic pest management, showcasing various techniques and tools used in organic farming.",
         link: "https://www.ams.usda.gov/sites/default/files/media/Organic%20Pest%20Management_FINAL.pdf",
-        image: "https://picsum.photos/seed/organic-farm/600/400",
-        imageHint: "organic farm management",
+        image: "https://picsum.photos/seed/wheat-field/600/400",
+        imageHint: "wheat field",
         tooltip: "Explore sustainable methods for controlling pests in organic farming."
     },
     {
@@ -23,8 +23,8 @@ const articles = [
         source: "Farmwest",
         overview: "An informative guide on setting up composting systems on farms, emphasizing sustainable practices and benefits.",
         link: "https://www.producer.com/wp-content/uploads/2021/03/composting-1024x576.jpg",
-        image: "https://picsum.photos/seed/compost-systems/600/400",
-        imageHint: "farm composting system",
+        image: "https://picsum.photos/seed/corn-field/600/400",
+        imageHint: "corn field",
         tooltip: "Learn how to set up cost-effective composting systems on your farm."
     },
     {
@@ -32,8 +32,8 @@ const articles = [
         source: "Lincoln University",
         overview: "A foundational resource covering the essentials of organic pest management, including prevention, monitoring, and control strategies.",
         link: "https://www.lincolnu.edu/_files/publications/basics-of-organic-ipm-gs-18-f-2015.pdf",
-        image: "https://picsum.photos/seed/pest-monitoring/600/400",
-        imageHint: "pest monitoring",
+        image: "https://picsum.photos/seed/tomato-plant/600/400",
+        imageHint: "tomato plant",
         tooltip: "Implement Integrated Pest Management (IPM) strategies in your organic farm."
     },
     {
@@ -41,8 +41,8 @@ const articles = [
         source: "SARE",
         overview: "A comprehensive guide offering strategies for managing insects and diseases in organic farming systems.",
         link: "https://www.sare.org/wp-content/uploads/Resource-Guide-for-Organic-Insect-and-Disease-Management.pdf",
-        image: "https://picsum.photos/seed/crop-disease/600/400",
-        imageHint: "crop disease",
+        image: "https://picsum.photos/seed/lettuce-crop/600/400",
+        imageHint: "lettuce crop",
         tooltip: "Manage insect and disease issues with organic farming practices."
     },
     {
@@ -50,8 +50,8 @@ const articles = [
         source: "FAO",
         overview: "An illustrated manual that teaches farmers how to produce compost at the household and small-farmer level, promoting sustainable waste recycling and soil health.",
         link: "https://openknowledge.fao.org/server/api/core/bitstreams/0658b4e0-53e3-4ed7-89d0-ff351bec1dff/content",
-        image: "https://picsum.photos/seed/groundnut-crop/600/400",
-        imageHint: "groundnut crop",
+        image: "https://picsum.photos/seed/carrot-farm/600/400",
+        imageHint: "carrot farm",
         tooltip: "Master the art of composting to enhance soil health and recycle waste."
     },
     {
@@ -59,8 +59,8 @@ const articles = [
         source: "Prince William County, Virginia",
         overview: "A comprehensive guide on composting at home, including benefits, methods, and tips for beginners.",
         link: "https://www.pwcva.gov/assets/documents/public-works/Compost%20Bin%20Pub%20HORT-49P%2020151030084256.pdf",
-        image: "https://picsum.photos/seed/soil-management/600/400",
-        imageHint: "soil management",
+        image: "https://picsum.photos/seed/strawberry-field/600/400",
+        imageHint: "strawberry field",
         tooltip: "Start composting at home with this beginner-friendly guide."
     }
 ];
