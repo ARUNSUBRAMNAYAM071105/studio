@@ -40,9 +40,9 @@ import { useToast } from "@/hooks/use-toast";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { PageHeader } from "@/components/page-header";
 import {
-  diagnosePlantDisease,
-  DiagnosePlantDiseaseOutput,
-} from "@/ai/flows/diagnose-plant-disease";
+  diagnosePlant,
+  DiagnosePlantOutput,
+} from "@/ai/flows/repurpose-diagnose-plant-disease";
 import {
   getLocalizedTreatmentAdvice,
   GetLocalizedTreatmentAdviceOutput,
@@ -77,7 +77,7 @@ type FarmerProfile = {
 
 export default function DiseaseDetectionPage() {
   const [preview, setPreview] = useState<string | null>(null);
-  const [diagnosis, setDiagnosis] = useState<DiagnosePlantDiseaseOutput | null>(null);
+  const [diagnosis, setDiagnosis] = useState<DiagnosePlantOutput | null>(null);
   const [treatment, setTreatment] = useState<GetLocalizedTreatmentAdviceOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -118,9 +118,9 @@ export default function DiseaseDetectionPage() {
 
     startDiagnosisTransition(async () => {
       try {
-        const result = await diagnosePlantDisease({ photoDataUri: preview });
+        const result = await diagnosePlant({ photoDataUri: preview });
         setDiagnosis(result);
-        if (result.confidenceScore === 0) {
+        if (result.diagnosis.isHealthy) {
           toast({
             title: "Healthy Plant!",
             description: "No disease was detected in the image.",
@@ -139,13 +139,13 @@ export default function DiseaseDetectionPage() {
   };
 
   const onTreatmentSubmit: SubmitHandler<z.infer<typeof treatmentSchema>> = async (data) => {
-    if (!diagnosis || !diagnosis.diseaseName) return;
+    if (!diagnosis || !diagnosis.diagnosis.diagnosis) return;
 
     startTreatmentTransition(async () => {
       try {
         const farmerProfile = profile ? `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}` : undefined;
         const result = await getLocalizedTreatmentAdvice({
-          disease: diagnosis.diseaseName,
+          disease: diagnosis.diagnosis.diagnosis,
           crop: data.crop,
           region: data.region,
           farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
@@ -245,23 +245,14 @@ export default function DiseaseDetectionPage() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        {diagnosis.confidenceScore > 0 ? (
+                        {!diagnosis.diagnosis.isHealthy ? (
                           <>
                             {preview && <Image src={preview} alt="Analyzed plant" width={600} height={400} className="rounded-md object-cover w-full aspect-video"/>}
                             <div>
                               <Label>Detected Disease</Label>
                               <p className="text-2xl font-bold text-destructive">
-                                {diagnosis.diseaseName}
+                                {diagnosis.diagnosis.diagnosis}
                               </p>
-                            </div>
-                            <div>
-                              <Label>Confidence</Label>
-                              <div className="flex items-center gap-2">
-                                <Progress value={diagnosis.confidenceScore * 100} className="w-full" />
-                                <span className="font-bold text-primary">
-                                  {Math.round(diagnosis.confidenceScore * 100)}%
-                                </span>
-                              </div>
                             </div>
                           </>
                         ) : (
@@ -272,7 +263,7 @@ export default function DiseaseDetectionPage() {
                            </div>
                         )}
                       </CardContent>
-                      {diagnosis.confidenceScore > 0 && 
+                      {!diagnosis.diagnosis.isHealthy && 
                         <CardFooter>
                            <Button onClick={handleDownloadPdf} variant="outline">
                                 <Download className="mr-2"/>
@@ -307,7 +298,7 @@ export default function DiseaseDetectionPage() {
           </Form>
         </Card>
 
-        {diagnosis && diagnosis.confidenceScore > 0 && (
+        {diagnosis && !diagnosis.diagnosis.isHealthy && (
           <Card>
             <CardHeader>
               <CardTitle className="font-headline flex items-center gap-2">
@@ -393,3 +384,5 @@ export default function DiseaseDetectionPage() {
     </div>
   );
 }
+
+    
