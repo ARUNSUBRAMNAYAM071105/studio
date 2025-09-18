@@ -68,7 +68,7 @@ export function Chatbot() {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed top-4 right-4 rounded-full w-16 h-16 shadow-lg z-50"
+        className="fixed bottom-4 right-4 rounded-full w-16 h-16 shadow-lg z-50"
       >
         <Bot className="w-8 h-8" />
       </Button>
@@ -76,7 +76,7 @@ export function Chatbot() {
   }
 
   return (
-    <Card className="fixed top-4 right-4 w-full max-w-sm h-[60vh] flex flex-col shadow-2xl z-50">
+    <Card className="fixed bottom-4 right-4 w-full max-w-sm h-[60vh] flex flex-col shadow-2xl z-50">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 font-headline"><Bot /> AI Advisor</CardTitle>
         <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>

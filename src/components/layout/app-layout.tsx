@@ -17,6 +17,7 @@ import {
   BarChart,
   CircleDollarSign,
   X,
+  Home
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
@@ -35,6 +36,7 @@ import useLocalStorage from "@/hooks/use-local-storage";
 import { Chatbot } from "../chatbot";
 
 const menuItems = [
+  { href: "/", label: "Dashboard", icon: Home },
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
   { href: "/harvest-predictor", label: "Harvest Predictor", icon: BarChart },
   { href: "/cost-estimator", label: "Cost Estimator", icon: CircleDollarSign },
@@ -60,25 +62,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      {isLoggedIn && <Sidebar />}
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <MobileSidebar />
-          <div className="w-full flex-1">
-            {/* You can add a search bar here if needed */}
-          </div>
-          {isLoggedIn ? <UserDropdown /> : (
-            <div className="flex items-center gap-2">
-              <Button asChild variant="ghost">
-                  <Link href="/login">Login</Link>
-              </Button>
-              <Button asChild>
-                  <Link href="/signup">Sign Up</Link>
-              </Button>
-            </div>
-          )}
-        </header>
+    <div className="flex min-h-screen w-full flex-col">
+      {isLoggedIn && <TopNav />}
+      <div className="flex flex-col flex-1">
         <div className="flex-1 bg-background">{children}</div>
       </div>
       {isLoggedIn && <Chatbot />}
@@ -86,36 +72,41 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Sidebar() {
-    const pathname = usePathname();
-    return (
-        <div className="hidden border-r bg-muted/40 md:block">
-            <div className="flex h-full max-h-screen flex-col gap-2">
-                <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                    <Link href="/" className="flex items-center gap-2 font-semibold">
-                        <AppLogo />
-                    </Link>
-                </div>
-                <div className="flex-1">
-                    <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                         {menuItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${pathname === item.href ? 'bg-muted text-primary' : 'text-muted-foreground'}`}
-                            >
-                                <item.icon className="h-4 w-4" />
-                                {item.label}
-                            </Link>
-                        ))}
-                    </nav>
-                </div>
-            </div>
+function TopNav() {
+  const pathname = usePathname();
+  return (
+    <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 z-40">
+      <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+        >
+          <AppLogo />
+          <span className="sr-only">CropSafe AI</span>
+        </Link>
+        {menuItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`transition-colors hover:text-foreground ${pathname === item.href ? 'text-foreground font-semibold' : 'text-muted-foreground'}`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+      <MobileNav />
+      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <div className="ml-auto flex-1 sm:flex-initial">
+          {/* Search can go here */}
         </div>
-    )
+        <UserDropdown />
+      </div>
+    </header>
+  );
 }
 
-function MobileSidebar() {
+
+function MobileNav() {
     const pathname = usePathname();
     return (
         <Sheet>
@@ -136,12 +127,13 @@ function MobileSidebar() {
                   className="flex items-center gap-2 text-lg font-semibold mb-4"
                 >
                   <AppLogo />
+                   <span className="sr-only">CropSafe AI</span>
                 </Link>
                 {menuItems.map((item) => (
                     <SheetClose asChild key={item.href}>
                         <Link
                             href={item.href}
-                            className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${pathname === item.href ? 'bg-muted text-foreground hover:text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                            className={`flex items-center gap-4 rounded-xl px-3 py-2 ${pathname === item.href ? 'bg-muted text-foreground hover:text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             <item.icon className="h-5 w-5" />
                             {item.label}
