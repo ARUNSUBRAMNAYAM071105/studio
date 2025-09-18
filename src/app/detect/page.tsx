@@ -12,7 +12,6 @@ import {
   Syringe,
   AlertTriangle,
   Leaf,
-  Download,
   Camera,
 } from "lucide-react";
 
@@ -165,14 +164,6 @@ export default function DiseaseDetectionPage() {
   
   const uploadPlaceholder = PlaceHolderImages.find(p => p.id === 'upload-placeholder');
   
-  const handleDownloadPdf = () => {
-    // This is a placeholder for PDF generation logic.
-    toast({
-      title: "Download Started",
-      description: "Your PDF report is being generated.",
-    });
-  };
-
   return (
     <div className="flex flex-1 flex-col">
       <PageHeader title="Disease Detection" />
@@ -263,14 +254,6 @@ export default function DiseaseDetectionPage() {
                            </div>
                         )}
                       </CardContent>
-                      {!diagnosis.diagnosis.isHealthy && 
-                        <CardFooter>
-                           <Button onClick={handleDownloadPdf} variant="outline">
-                                <Download className="mr-2"/>
-                                Download PDF
-                            </Button>
-                        </CardFooter>
-                      }
                     </Card>
                   )}
 
@@ -384,5 +367,3 @@ export default function DiseaseDetectionPage() {
     </div>
   );
 }
-
-    
