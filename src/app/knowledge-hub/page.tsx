@@ -14,26 +14,26 @@ const articles = [
         source: "USDA AMS",
         overview: "A visual representation of best practices in organic pest management, showcasing various techniques and tools used in organic farming.",
         link: "https://www.ams.usda.gov/sites/default/files/media/Organic%20Pest%20Management_FINAL.pdf",
-        image: "https://picsum.photos/seed/organic-farm/600/400",
-        imageHint: "organic farm",
+        image: "https://picsum.photos/seed/crop-rows/600/400",
+        imageHint: "crop rows",
         tooltip: "Explore sustainable methods for controlling pests in organic farming."
     },
     {
         title: "On-Farm Composting Guide",
         source: "Farmwest",
         overview: "An informative guide on setting up composting systems on farms, emphasizing sustainable practices and benefits.",
-        link: "https://farmwest.com/wp-content/uploads/2020/09/composting_guide.pdf",
-        image: "https://picsum.photos/seed/compost-pile/600/400",
-        imageHint: "compost pile",
+        link: "https://www.producer.com/wp-content/uploads/2021/03/composting-1024x576.jpg",
+        image: "https://picsum.photos/seed/peanut-field/600/400",
+        imageHint: "peanut field",
         tooltip: "Learn how to set up cost-effective composting systems on your farm."
     },
     {
-        title: "Basics of Organic Integrated Pest Management",
+        title: "Basics of Organic Pest Management",
         source: "Lincoln University",
         overview: "A foundational resource covering the essentials of organic pest management, including prevention, monitoring, and control strategies.",
         link: "https://www.lincolnu.edu/_files/publications/basics-of-organic-ipm-gs-18-f-2015.pdf",
-        image: "https://picsum.photos/seed/ladybug-leaf/600/400",
-        imageHint: "ladybug leaf",
+        image: "https://picsum.photos/seed/green-plants/600/400",
+        imageHint: "green plants",
         tooltip: "Implement Integrated Pest Management (IPM) strategies in your organic farm."
     },
     {
@@ -41,8 +41,8 @@ const articles = [
         source: "SARE",
         overview: "A comprehensive guide offering strategies for managing insects and diseases in organic farming systems.",
         link: "https://www.sare.org/wp-content/uploads/Resource-Guide-for-Organic-Insect-and-Disease-Management.pdf",
-        image: "https://picsum.photos/seed/healthy-crops/600/400",
-        imageHint: "healthy crops",
+        image: "https://picsum.photos/seed/farm-field/600/400",
+        imageHint: "farm field",
         tooltip: "Manage insect and disease issues with organic farming practices."
     },
     {
@@ -50,8 +50,8 @@ const articles = [
         source: "FAO",
         overview: "An illustrated manual that teaches farmers how to produce compost at the household and small-farmer level, promoting sustainable waste recycling and soil health.",
         link: "https://openknowledge.fao.org/server/api/core/bitstreams/0658b4e0-53e3-4ed7-89d0-ff351bec1dff/content",
-        image: "https://picsum.photos/seed/vegetable-garden/600/400",
-        imageHint: "vegetable garden",
+        image: "https://picsum.photos/seed/soybean-field/600/400",
+        imageHint: "soybean field",
         tooltip: "Master the art of composting to enhance soil health and recycle waste."
     },
     {
@@ -59,8 +59,8 @@ const articles = [
         source: "Prince William County, Virginia",
         overview: "A comprehensive guide on composting at home, including benefits, methods, and tips for beginners.",
         link: "https://www.pwcva.gov/assets/documents/public-works/Compost%20Bin%20Pub%20HORT-49P%2020151030084256.pdf",
-        image: "https://picsum.photos/seed/fruit-basket/600/400",
-        imageHint: "fruit basket",
+        image: "https://picsum.photos/seed/groundnut-farm/600/400",
+        imageHint: "groundnut farm",
         tooltip: "Start composting at home with this beginner-friendly guide."
     }
 ];
