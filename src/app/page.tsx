@@ -222,8 +222,6 @@ export default function DashboardPage() {
                           style={{ objectFit: 'cover' }}
                           className="opacity-50"
                           data-ai-hint={uploadPlaceholder.imageHint}
-                          width={600}
-                          height={400}
                         />
                       )
                     )}
