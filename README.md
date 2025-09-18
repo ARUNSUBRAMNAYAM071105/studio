@@ -27,6 +27,10 @@ CropSafe AI is a comprehensive web application designed to assist farmers in man
 - **Market Analysis**: View current market prices for various crops.
 - **AI Chatbot Advisor**: Get instant answers to your farming questions from an AI assistant.
 
+##Datasets 
+
+https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset/data
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
