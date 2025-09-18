@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Leaf,
   Camera,
+  Download,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -46,6 +55,10 @@ import {
   getLocalizedTreatmentAdvice,
   GetLocalizedTreatmentAdviceOutput,
 } from "@/ai/flows/get-localized-treatment-advice";
+import {
+    getCostEstimation,
+    GetCostEstimationOutput,
+} from "@/ai/flows/get-cost-estimation";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -78,6 +91,7 @@ export default function DiseaseDetectionPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState<DiagnosePlantOutput | null>(null);
   const [treatment, setTreatment] = useState<GetLocalizedTreatmentAdviceOutput | null>(null);
+  const [costEstimation, setCostEstimation] = useState<GetCostEstimationOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -106,6 +120,7 @@ export default function DiseaseDetectionPage() {
         setPreview(reader.result as string);
         setDiagnosis(null);
         setTreatment(null);
+        setCostEstimation(null);
         setError(null);
       };
       reader.readAsDataURL(file);
@@ -117,6 +132,10 @@ export default function DiseaseDetectionPage() {
 
     startDiagnosisTransition(async () => {
       try {
+        setDiagnosis(null);
+        setTreatment(null);
+        setCostEstimation(null);
+        setError(null);
         const result = await diagnosePlant({ photoDataUri: preview });
         setDiagnosis(result);
         if (result.diagnosis.isHealthy) {
@@ -142,21 +161,35 @@ export default function DiseaseDetectionPage() {
 
     startTreatmentTransition(async () => {
       try {
+        setTreatment(null);
+        setCostEstimation(null);
+
         const farmerProfile = profile ? `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}` : undefined;
-        const result = await getLocalizedTreatmentAdvice({
-          disease: diagnosis.diagnosis.diagnosis,
-          crop: data.crop,
-          region: data.region,
-          farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
-        });
-        setTreatment(result);
+        
+        // Fetch treatment advice and cost estimation in parallel
+        const [treatmentResult, costResult] = await Promise.all([
+          getLocalizedTreatmentAdvice({
+            disease: diagnosis.diagnosis.diagnosis,
+            crop: data.crop,
+            region: data.region,
+            farmerProfile: farmerProfile && farmerProfile.length > 20 ? farmerProfile : undefined,
+          }),
+          getCostEstimation({
+            diseaseName: diagnosis.diagnosis.diagnosis,
+            region: data.region,
+          })
+        ]);
+
+        setTreatment(treatmentResult);
+        setCostEstimation(costResult);
+
       } catch (e) {
         console.error(e);
-        setError("Failed to get treatment advice. Please try again.");
+        setError("Failed to get treatment advice or cost estimation. Please try again.");
         toast({
           variant: "destructive",
-          title: "Treatment Advice Error",
-          description: "An unexpected error occurred while fetching advice.",
+          title: "Error",
+          description: "An unexpected error occurred while fetching advice and costs.",
         });
       }
     });
@@ -257,7 +290,7 @@ export default function DiseaseDetectionPage() {
                     </Card>
                   )}
 
-                  {!isDiagnosing && error && (
+                  {!isDiagnosing && error && !diagnosis && (
                     <div className="flex flex-col items-center justify-center h-full space-y-4 text-center text-destructive">
                       <AlertTriangle className="h-16 w-16" />
                       <p className="font-semibold text-lg">Diagnosis Failed</p>
@@ -288,7 +321,7 @@ export default function DiseaseDetectionPage() {
                 <Syringe /> Get Localized Treatment Advice
               </CardTitle>
               <CardDescription>
-                Provide your crop type and region for tailored recommendations.
+                Provide your crop type and region for tailored recommendations and cost estimates.
               </CardDescription>
             </CardHeader>
             <Form {...treatmentForm}>
@@ -325,10 +358,10 @@ export default function DiseaseDetectionPage() {
                   <Button type="submit" disabled={isTreating} size="lg">
                     {isTreating ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Advice...
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating...
                       </>
                     ) : (
-                      "Get Treatment Plan"
+                      "Get Treatment Plan & Costs"
                     )}
                   </Button>
                 </CardFooter>
@@ -341,12 +374,24 @@ export default function DiseaseDetectionPage() {
           <Card>
             <CardContent className="p-6 flex flex-col items-center justify-center h-48 space-y-4 text-center">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="font-semibold text-lg">Generating your custom treatment plan...</p>
+              <p className="font-semibold text-lg">Generating your custom plan...</p>
               <p className="text-muted-foreground">
-                We're consulting our digital agronomist.
+                We're consulting our digital agronomist and checking local prices.
               </p>
             </CardContent>
           </Card>
+        )}
+
+        {error && (treatment || costEstimation) && (
+            <Card>
+                <CardContent>
+                    <div className="flex flex-col items-center justify-center h-full space-y-4 text-center text-destructive p-6">
+                        <AlertTriangle className="h-16 w-16" />
+                        <p className="font-semibold text-lg">Couldn't Retrieve Full Details</p>
+                        <p>{error}</p>
+                    </div>
+                </CardContent>
+            </Card>
         )}
 
         {treatment && (
@@ -363,6 +408,38 @@ export default function DiseaseDetectionPage() {
             </CardContent>
           </Card>
         )}
+        
+        {costEstimation && costEstimation.remedies.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-headline">Estimated Remedy Costs</CardTitle>
+              <CardDescription>
+                Approximate costs for remedies in your region. Prices may vary.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Remedy</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead className="text-right">Est. Cost</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {costEstimation.remedies.map((remedy, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">{remedy.remedyName}</TableCell>
+                                <TableCell>{remedy.remedyType}</TableCell>
+                                <TableCell className="text-right">~${remedy.avgCost.toFixed(2)} per {remedy.unit}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
+          </Card>
+        )}
+        
       </main>
     </div>
   );
