@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, or } from "firebase/firestore";
 import { firebaseConfig } from "./firebase-config";
 
 // Initialize Firebase
@@ -18,6 +18,7 @@ type Remedy = {
 
 /**
  * Retrieves a list of remedies for a given disease and region from Firestore.
+ * It will look for remedies that match the disease and are available in either the specified region or a "Global" region.
  * @param diseaseName - The name of the disease to find remedies for.
  * @param region - The farmer's region to find localized costs.
  * @returns A promise that resolves to an array of Remedy objects.
@@ -25,11 +26,14 @@ type Remedy = {
 export async function getRemedies(diseaseName: string, region: string): Promise<Omit<Remedy, 'diseaseName' | 'region'>[]> {
   const remediesCol = collection(db, "remedies");
   
-  // Create a query to find remedies matching the disease and region
+  // Create a query to find remedies matching the disease and either the specific region or "Global"
   const q = query(
     remediesCol,
     where("diseaseName", "==", diseaseName),
-    where("region", "==", region)
+    or(
+        where("region", "==", region),
+        where("region", "==", "Global")
+    )
   );
 
   const querySnapshot = await getDocs(q);
