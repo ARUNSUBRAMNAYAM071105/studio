@@ -7,14 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
 const cropPrices = [
-    { crop: 'Maize', price: 25.50, unit: '90kg Bag', change: 0.5, trend: 'up' },
-    { crop: 'Beans', price: 80.20, unit: '90kg Bag', change: -1.2, trend: 'down' },
-    { crop: 'Tomatoes', price: 5.75, unit: 'kg', change: 0.15, trend: 'up' },
-    { crop: 'Potatoes', price: 35.00, unit: '50kg Bag', change: 2.1, trend: 'up' },
-    { crop: 'Onions', price: 1.50, unit: 'kg', change: -0.05, trend: 'down' },
-    { crop: 'Cabbages', price: 30.00, unit: 'Large Head', change: 0.0, trend: 'stable' },
-    { crop: 'Bell Peppers', price: 2.10, unit: 'kg', change: 0.25, trend: 'up' },
-    { crop: 'Grapes', price: 4.50, unit: 'kg', change: -0.30, trend: 'down' },
+    { crop: 'Maize', price: 22, unit: 'kg', change: 0.5, trend: 'up' },
+    { crop: 'Beans', price: 95, unit: 'kg', change: -1.2, trend: 'down' },
+    { crop: 'Tomatoes', price: 40, unit: 'kg', change: 2.5, trend: 'up' },
+    { crop: 'Potatoes', price: 30, unit: 'kg', change: 1.1, trend: 'up' },
+    { crop: 'Onions', price: 35, unit: 'kg', change: -0.5, trend: 'down' },
+    { crop: 'Cabbages', price: 25, unit: 'kg', change: 0.0, trend: 'stable' },
+    { crop: 'Bell Peppers', price: 60, unit: 'kg', change: 3.0, trend: 'up' },
+    { crop: 'Grapes', price: 80, unit: 'kg', change: -2.0, trend: 'down' },
 ];
 
 export default function MarketAnalysisPage() {
@@ -32,16 +32,15 @@ export default function MarketAnalysisPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle className="font-headline">Current Market Prices</CardTitle>
-                        <CardDescription>Live prices from local and regional markets. All prices in USD.</CardDescription>
+                        <CardDescription>Live prices from local and regional markets in India. All prices in INR (₹).</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Crop</TableHead>
-                                    <TableHead className="text-right">Price</TableHead>
-                                    <TableHead>Unit</TableHead>
-                                    <TableHead className="text-right">24h Change</TableHead>
+                                    <TableHead className="text-right">Price (per kg)</TableHead>
+                                    <TableHead className="text-right">24h Change (₹)</TableHead>
                                     <TableHead className="text-center">Trend</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -49,8 +48,7 @@ export default function MarketAnalysisPage() {
                                 {cropPrices.map((item) => (
                                     <TableRow key={item.crop}>
                                         <TableCell className="font-medium">{item.crop}</TableCell>
-                                        <TableCell className="text-right font-mono">${item.price.toFixed(2)}</TableCell>
-                                        <TableCell className="text-muted-foreground">{item.unit}</TableCell>
+                                        <TableCell className="text-right font-mono">₹{item.price.toFixed(2)}</TableCell>
                                         <TableCell className={`text-right font-mono ${item.change > 0 ? 'text-green-500' : item.change < 0 ? 'text-red-500' : 'text-gray-500'}`}>
                                             {item.change > 0 ? '+' : ''}{item.change.toFixed(2)}
                                         </TableCell>

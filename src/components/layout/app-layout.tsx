@@ -8,7 +8,6 @@ import {
   LogOut,
   User,
   ScanLine,
-  BookOpen,
   Bell,
   Menu,
   LineChart,
@@ -31,7 +30,6 @@ import { Chatbot } from "../chatbot";
 
 const menuItems = [
   { href: "/detect", label: "Scan Crop", icon: ScanLine },
-  { href: "/hub", label: "Knowledge Hub", icon: BookOpen },
   { href: "/warnings", label: "Alerts", icon: Bell },
   { href: "/market", label: "Market Analysis", icon: LineChart },
 ];

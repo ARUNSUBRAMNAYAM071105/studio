@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ScanLine, BookOpen, Bell } from "lucide-react";
+import { ArrowRight, ScanLine, Bell, LineChart } from "lucide-react";
 import useLocalStorage from "@/hooks/use-local-storage";
 
 
@@ -53,11 +53,11 @@ export default function HomePage() {
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
-            <BookOpen className="w-12 h-12 text-primary mb-4" />
-            <CardTitle className="font-headline">Knowledge Hub</CardTitle>
-            <CardDescription className="mb-4">Browse articles and guides</CardDescription>
+            <LineChart className="w-12 h-12 text-primary mb-4" />
+            <CardTitle className="font-headline">Market Analysis</CardTitle>
+            <CardDescription className="mb-4">View latest crop prices</CardDescription>
             <Button asChild>
-                <Link href="/hub">Explore Hub <ArrowRight className="ml-2"/></Link>
+                <Link href="/market">View Market <ArrowRight className="ml-2"/></Link>
             </Button>
           </Card>
            <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
