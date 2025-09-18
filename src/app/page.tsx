@@ -28,11 +28,10 @@ export default function HomePage() {
 
   useEffect(() => {
     setIsClient(true);
-    // No condition to check for `isClient` because we want this to run on the first client-side render
-    if (!profile) {
+    if (!profile && isClient) {
       router.push('/login');
     }
-  }, [profile, router]);
+  }, [profile, router, isClient]);
 
   if (!isClient || !profile) {
     // You can render a loading spinner here if you want
@@ -42,8 +41,16 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHeader title={`Welcome, ${profile.name}!`} />
+      <PageHeader title={`Dashboard`} />
       <main className="flex-1 p-4 lg:p-6 space-y-6">
+         <Card>
+          <CardHeader>
+            <CardTitle>Welcome, {profile.name}!</CardTitle>
+            <CardDescription>
+              Here's a quick overview of your farm's status.
+            </CardDescription>
+          </CardHeader>
+        </Card>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card className="flex flex-col justify-center items-center text-center p-6 hover:bg-accent/50 transition-colors">
             <ScanLine className="w-12 h-12 text-primary mb-4" />
