@@ -1,3 +1,16 @@
+
+THIS IS THE DEPLOYMENT LINK OF VERCEL 
+
+https://cropai-phi.vercel.app/
+
+PLEASE COPY ABOVE LINK FOR THE APP
+
+
+
+
+
+
+
 # CropSafe AI - AI-Powered Early Warning and Management of Crop Diseases
 
 CropSafe AI is a comprehensive web application designed to assist farmers in managing crop health. It leverages AI to provide instant disease diagnosis, localized treatment advice, harvest yield predictions, and early warnings for potential disease outbreaks. The platform also fosters a community where farmers can share knowledge and access up-to-date market information.
