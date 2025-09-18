@@ -48,10 +48,10 @@ export default function ProfilePage() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: profile?.name || "",
-      location: profile?.location || "",
-      landSize: profile?.landSize || "",
-      crops: profile?.crops || "",
+      name: "",
+      location: "",
+      landSize: "",
+      crops: "",
     },
   });
   
@@ -65,7 +65,7 @@ export default function ProfilePage() {
         crops: profile.crops || "",
       });
     }
-  }, [profile, form]);
+  }, [profile, form.reset]);
 
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {
