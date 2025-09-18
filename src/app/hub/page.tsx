@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -89,22 +90,24 @@ export default function KnowledgeHubPage() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredArticles.length > 0 ? (
                         filteredArticles.map((article) => (
-                            <Card key={article.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group">
-                                <div className="relative h-48 w-full">
-                                    <Image src={article.image} alt={article.title} fill className="object-cover" data-ai-hint={article.imageHint} />
-                                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-                                    <div className="absolute top-2 right-2">
-                                        <Badge variant="secondary" className="flex items-center gap-1">
-                                            <TypeIcon type={article.type} className="h-4 w-4" />
-                                            {article.type}
-                                        </Badge>
+                            <Link href="#" key={article.id} className="group block">
+                                <Card className="overflow-hidden shadow-lg h-full group-hover:shadow-xl transition-shadow duration-300">
+                                    <div className="relative h-48 w-full">
+                                        <Image src={article.image} alt={article.title} fill className="object-cover" data-ai-hint={article.imageHint} />
+                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+                                        <div className="absolute top-2 right-2">
+                                            <Badge variant="secondary" className="flex items-center gap-1">
+                                                <TypeIcon type={article.type} className="h-4 w-4" />
+                                                {article.type}
+                                            </Badge>
+                                        </div>
                                     </div>
-                                </div>
-                                <CardHeader>
-                                    <CardTitle className="font-headline text-xl">{article.title}</CardTitle>
-                                    <CardDescription>Crop: {article.crop}</CardDescription>
-                                </CardHeader>
-                            </Card>
+                                    <CardHeader>
+                                        <CardTitle className="font-headline text-xl">{article.title}</CardTitle>
+                                        <CardDescription>Crop: {article.crop}</CardDescription>
+                                    </CardHeader>
+                                </Card>
+                            </Link>
                         ))
                     ) : (
                         <p className="text-muted-foreground md:col-span-3 text-center">No articles found matching your criteria.</p>

@@ -1,0 +1,69 @@
+"use client";
+
+import { PageHeader } from "@/components/page-header";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ArrowUp, ArrowDown } from "lucide-react";
+
+const cropPrices = [
+    { crop: 'Maize', price: 25.50, unit: '90kg Bag', change: 0.5, trend: 'up' },
+    { crop: 'Beans', price: 80.20, unit: '90kg Bag', change: -1.2, trend: 'down' },
+    { crop: 'Tomatoes', price: 5.75, unit: 'kg', change: 0.15, trend: 'up' },
+    { crop: 'Potatoes', price: 35.00, unit: '50kg Bag', change: 2.1, trend: 'up' },
+    { crop: 'Onions', price: 1.50, unit: 'kg', change: -0.05, trend: 'down' },
+    { crop: 'Cabbages', price: 30.00, unit: 'Large Head', change: 0.0, trend: 'stable' },
+    { crop: 'Bell Peppers', price: 2.10, unit: 'kg', change: 0.25, trend: 'up' },
+    { crop: 'Grapes', price: 4.50, unit: 'kg', change: -0.30, trend: 'down' },
+];
+
+export default function MarketAnalysisPage() {
+
+    const TrendArrow = ({ trend }: { trend: string }) => {
+        if (trend === 'up') return <ArrowUp className="h-4 w-4 text-green-500" />;
+        if (trend === 'down') return <ArrowDown className="h-4 w-4 text-red-500" />;
+        return <span className="h-4 w-4 text-gray-500">-</span>;
+    };
+
+    return (
+        <div className="flex flex-1 flex-col">
+            <PageHeader title="Market Crop Price Analysis" />
+            <main className="flex-1 p-4 lg:p-6">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="font-headline">Current Market Prices</CardTitle>
+                        <CardDescription>Live prices from local and regional markets. All prices in USD.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Crop</TableHead>
+                                    <TableHead className="text-right">Price</TableHead>
+                                    <TableHead>Unit</TableHead>
+                                    <TableHead className="text-right">24h Change</TableHead>
+                                    <TableHead className="text-center">Trend</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {cropPrices.map((item) => (
+                                    <TableRow key={item.crop}>
+                                        <TableCell className="font-medium">{item.crop}</TableCell>
+                                        <TableCell className="text-right font-mono">${item.price.toFixed(2)}</TableCell>
+                                        <TableCell className="text-muted-foreground">{item.unit}</TableCell>
+                                        <TableCell className={`text-right font-mono ${item.change > 0 ? 'text-green-500' : item.change < 0 ? 'text-red-500' : 'text-gray-500'}`}>
+                                            {item.change > 0 ? '+' : ''}{item.change.toFixed(2)}
+                                        </TableCell>
+                                        <TableCell className="flex justify-center items-center">
+                                            <TrendArrow trend={item.trend} />
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
+            </main>
+        </div>
+    );
+}
