@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -11,22 +11,11 @@ import {
   ChevronDown,
   BookOpen,
   Users,
-  ScanLine
+  ScanLine,
+  Menu
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarFooter,
-  SidebarInset,
-  useSidebar,
-} from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -37,96 +26,113 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import useLocalStorage from "@/hooks/use-local-storage";
 
 const menuItems = [
-  { href: "/", label: "Home", icon: LayoutDashboard },
-  { href: "/detect", label: "Detect Disease", icon: ScanLine },
-  { href: "/hub", label: "Knowledge Hub", icon: BookOpen },
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/community", label: "Community", icon: Users },
-  { href: "/warnings", label: "Early Warnings", icon: ShieldAlert },
-  { href: "/profile", label: "My Profile", icon: User },
+  { href: "/", label: "Home" },
+  { href: "/detect", label: "Detect Disease" },
+  { href: "/hub", label: "Knowledge Hub" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/community", label: "Community" },
+  { href: "/warnings", label: "Early Warnings" },
 ];
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [profile] = useLocalStorage<{ name: string } | null>("farmer-profile", null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const isLoggedIn = profile && profile.name;
+
+  if (pathname === '/login' || pathname === '/signup') {
+    return <>{children}</>;
+  }
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
+    <div className="flex flex-col min-h-screen">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center">
           <AppLogo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
+          <nav className="hidden md:flex md:items-center md:gap-6 text-sm font-medium ml-10">
             {menuItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === item.href}
-                  tooltip={item.label}
-                >
-                  <Link href={item.href}>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`transition-colors hover:text-foreground/80 ${pathname === item.href ? 'text-foreground' : 'text-foreground/60'}`}
+              >
+                {item.label}
+              </Link>
             ))}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <UserDropdown />
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
+          </nav>
+          <div className="flex flex-1 items-center justify-end gap-4">
+            <nav className="flex items-center gap-2">
+              {isClient && isLoggedIn ? (
+                <UserDropdown />
+              ) : (
+                <>
+                  <Button asChild variant="ghost">
+                      <Link href="/login">Login</Link>
+                  </Button>
+                  <Button asChild>
+                      <Link href="/signup">Sign Up</Link>
+                  </Button>
+                </>
+              )}
+            </nav>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right">
+                <nav className="grid gap-6 text-lg font-medium mt-8">
+                  <AppLogo />
+                  {menuItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-4 px-2.5 ${pathname === item.href ? 'text-foreground' : 'text-foreground/70 hover:text-foreground'}`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+      </header>
+      <div className="flex-1">{children}</div>
+    </div>
   );
 }
 
 function UserDropdown() {
-  const { state } = useSidebar();
-  
-  if (state === "collapsed") {
-    return (
-       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
-              <AvatarFallback>F</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    )
-  }
+  const [profile, setProfile] = useLocalStorage<{ name: string } | null>("farmer-profile", null);
+  const router = require('next/navigation').useRouter();
+
+  const handleLogout = () => {
+    setProfile(null);
+    router.push('/login');
+  };
 
   return (
-    <div className="flex items-center gap-2 p-2 rounded-lg bg-sidebar-accent">
-        <Avatar className="h-9 w-9">
-            <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
-            <AvatarFallback>F</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold truncate text-sidebar-accent-foreground">Smallholder Farmer</p>
-            <p className="text-xs truncate text-muted-foreground">farmer@cropsafe.ai</p>
-        </div>
+    <div className="flex items-center gap-4">
+       <span className="hidden sm:inline-block text-sm">Welcome, {profile?.name}</span>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
-                    <ChevronDown className="h-4 w-4 text-muted-foreground"/>
+                <Button variant="secondary" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                        <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
+                        <AvatarFallback>{profile?.name?.charAt(0) || 'F'}</AvatarFallback>
+                    </Avatar>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
@@ -139,7 +145,7 @@ function UserDropdown() {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                 </DropdownMenuItem>
