@@ -1,3 +1,4 @@
+
 "use client";
 
 import { PageHeader } from "@/components/page-header";
@@ -25,6 +26,78 @@ const posts = [
         content: "What are the best cover crops to use for improving soil health for maize in the Rift Valley? I'm preparing my field for the next season and want to try something new.",
         likes: 25,
         comments: 8,
+    },
+    {
+        id: 3,
+        author: "Samuel Kariuki",
+        avatar: "https://picsum.photos/seed/samuel/100/100",
+        time: "3 days ago",
+        content: "My tomatoes are suffering from blossom end rot. Besides calcium, what are some other organic solutions I can try? The soil pH is around 6.5.",
+        likes: 8,
+        comments: 5,
+    },
+    {
+        id: 4,
+        author: "Fatima Al-Jamil",
+        avatar: "https://picsum.photos/seed/fatima/100/100",
+        time: "5 days ago",
+        content: "I'm looking for advice on intercropping with sorghum. What plants have you found to be good companions to deter pests and improve yield?",
+        likes: 18,
+        comments: 6,
+    },
+    {
+        id: 5,
+        author: "David Chen",
+        avatar: "https://picsum.photos/seed/david/100/100",
+        time: "1 week ago",
+        content: "Success story! I built a simple drip irrigation system using recycled plastic bottles for my vegetable garden. It has cut my water usage by half. Happy to share the design if anyone is interested.",
+        likes: 45,
+        comments: 15,
+    },
+    {
+        id: 6,
+        author: "Maria Garcia",
+        avatar: "https://picsum.photos/seed/maria/100/100",
+        time: "1 week ago",
+        content: "Has anyone tried using marigolds as a natural nematicide in potato fields? I've read about it but would love to hear about real-world results.",
+        likes: 22,
+        comments: 9,
+    },
+    {
+        id: 7,
+        author: "Kenpachi Ramaswamy",
+        avatar: "https://picsum.photos/seed/kenpachi/100/100",
+        time: "2 weeks ago",
+        content: "I'm setting up my first vermicomposting bin. What's the ideal ratio of greens to browns to start with for a healthy worm population?",
+        likes: 31,
+        comments: 11,
+    },
+    {
+        id: 8,
+        author: "Chidinma Okafor",
+        avatar: "https://picsum.photos/seed/chidinma/100/100",
+        time: "2 weeks ago",
+        content: "Warning to farmers in the Ashanti Region: I've spotted early signs of Fall Armyworm in my young maize. Be vigilant and start scouting your fields!",
+        likes: 50,
+        comments: 20,
+    },
+    {
+        id: 9,
+        author: "John Doe",
+        avatar: "https://picsum.photos/seed/johnd/100/100",
+        time: "3 weeks ago",
+        content: "Does anyone have a good recipe for a homemade compost tea? I want to give my leafy greens a nutrient boost.",
+        likes: 15,
+        comments: 7,
+    },
+    {
+        id: 10,
+        author: "Priya Singh",
+        avatar: "https://picsum.photos/seed/priya/100/100",
+        time: "1 month ago",
+        content: "How do you manage waterlogging in clay soil during the rainy season? My fields are getting swamped, and I'm worried about root rot.",
+        likes: 28,
+        comments: 12,
     }
 ];
 
