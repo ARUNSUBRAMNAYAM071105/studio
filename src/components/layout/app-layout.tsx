@@ -9,6 +9,9 @@ import {
   User,
   LogOut,
   ChevronDown,
+  BookOpen,
+  Users,
+  ScanLine
 } from "lucide-react";
 
 import { AppLogo } from "@/components/icons";
@@ -36,7 +39,11 @@ import {
 import { Button } from "../ui/button";
 
 const menuItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/", label: "Home", icon: LayoutDashboard },
+  { href: "/detect", label: "Detect Disease", icon: ScanLine },
+  { href: "/hub", label: "Knowledge Hub", icon: BookOpen },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/community", label: "Community", icon: Users },
   { href: "/warnings", label: "Early Warnings", icon: ShieldAlert },
   { href: "/profile", label: "My Profile", icon: User },
 ];
@@ -86,7 +93,7 @@ function UserDropdown() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://picsum.photos/seed/farmer/100/100" />
+              <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
               <AvatarFallback>F</AvatarFallback>
             </Avatar>
           </Button>
@@ -109,7 +116,7 @@ function UserDropdown() {
   return (
     <div className="flex items-center gap-2 p-2 rounded-lg bg-sidebar-accent">
         <Avatar className="h-9 w-9">
-            <AvatarImage src="https://picsum.photos/seed/farmer/100/100" />
+            <AvatarImage src="https://picsum.photos/seed/farmer/100/100" data-ai-hint="farmer" />
             <AvatarFallback>F</AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">

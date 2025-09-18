@@ -8,10 +8,10 @@
       "imageHint": "green leaf"
     },
     {
-        "id": "dashboard-hero",
-        "description": "A vibrant green farm field under a blue sky.",
-        "imageUrl": "https://picsum.photos/seed/farm/1200/400",
-        "imageHint": "farm field"
+        "id": "homepage-hero",
+        "description": "A farmer standing in a vibrant green field under a blue sky.",
+        "imageUrl": "https://picsum.photos/seed/farmer-field/1800/1000",
+        "imageHint": "farmer field"
     }
   ]
 }

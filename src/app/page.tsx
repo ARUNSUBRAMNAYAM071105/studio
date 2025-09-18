@@ -1,395 +1,104 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import Image from "next/image";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  UploadCloud,
-  Loader2,
-  HeartPulse,
-  Syringe,
-  AlertTriangle,
-  Leaf,
-} from "lucide-react";
-
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useToast } from "@/hooks/use-toast";
-import useLocalStorage from "@/hooks/use-local-storage";
-import { PageHeader } from "@/components/page-header";
-import {
-  diagnosePlantDisease,
-  DiagnosePlantDiseaseOutput,
-} from "@/ai/flows/diagnose-plant-disease";
-import {
-  getLocalizedTreatmentAdvice,
-  GetLocalizedTreatmentAdviceOutput,
-} from "@/ai/flows/get-localized-treatment-advice";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, Leaf, Map, Bell } from "lucide-react";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-const diagnosisSchema = z.object({
-  image: z
-    .any()
-    .refine((files) => files?.length == 1, "Image is required.")
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
-    ),
-});
-
-const treatmentSchema = z.object({
-  crop: z.string().min(1, "Crop type is required."),
-  region: z.string().min(1, "Region is required."),
-});
-
-type FarmerProfile = {
-  name: string;
-  location: string;
-  landSize: string;
-  crops: string;
-};
-
-export default function DashboardPage() {
-  const [preview, setPreview] = useState<string | null>(null);
-  const [diagnosis, setDiagnosis] = useState<DiagnosePlantDiseaseOutput | null>(null);
-  const [treatment, setTreatment] = useState<GetLocalizedTreatmentAdviceOutput | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  const [isDiagnosing, startDiagnosisTransition] = useTransition();
-  const [isTreating, startTreatmentTransition] = useTransition();
-
-  const [profile] = useLocalStorage<FarmerProfile>("farmer-profile", {
-    name: "",
-    location: "",
-    landSize: "",
-    crops: "",
-  });
-
-  const diagnosisForm = useForm<z.infer<typeof diagnosisSchema>>({
-    resolver: zodResolver(diagnosisSchema),
-  });
-
-  const treatmentForm = useForm<z.infer<typeof treatmentSchema>>({
-    resolver: zodResolver(treatmentSchema),
-    defaultValues: {
-      crop: profile.crops.split(',')[0]?.trim() || "",
-      region: profile.location || "",
-    },
-  });
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-        setDiagnosis(null);
-        setTreatment(null);
-        setError(null);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const onDiagnosisSubmit: SubmitHandler<z.infer<typeof diagnosisSchema>> = async (data) => {
-    if (!preview) return;
-
-    startDiagnosisTransition(async () => {
-      try {
-        const result = await diagnosePlantDisease({ photoDataUri: preview });
-        setDiagnosis(result);
-        if (result.confidenceScore === 0) {
-          toast({
-            title: "Healthy Plant!",
-            description: "No disease was detected in the image.",
-          });
-        }
-      } catch (e) {
-        console.error(e);
-        setError("Failed to diagnose the plant. Please try again.");
-        toast({
-          variant: "destructive",
-          title: "Diagnosis Error",
-          description: "An unexpected error occurred during diagnosis.",
-        });
-      }
-    });
-  };
-
-  const onTreatmentSubmit: SubmitHandler<z.infer<typeof treatmentSchema>> = async (data) => {
-    if (!diagnosis || !diagnosis.diseaseName) return;
-
-    startTreatmentTransition(async () => {
-      try {
-        const farmerProfile = `Name: ${profile.name}, Land Size: ${profile.landSize}, Location: ${profile.location}, Crops: ${profile.crops}`;
-        const result = await getLocalizedTreatmentAdvice({
-          disease: diagnosis.diseaseName,
-          crop: data.crop,
-          region: data.region,
-          farmerProfile: farmerProfile.length > 20 ? farmerProfile : undefined,
-        });
-        setTreatment(result);
-      } catch (e) {
-        console.error(e);
-        setError("Failed to get treatment advice. Please try again.");
-        toast({
-          variant: "destructive",
-          title: "Treatment Advice Error",
-          description: "An unexpected error occurred while fetching advice.",
-        });
-      }
-    });
-  };
-  
-  const uploadPlaceholder = PlaceHolderImages.find(p => p.id === 'upload-placeholder');
-
-
+export default function HomePage() {
   return (
-    <div className="flex flex-1 flex-col">
-      <PageHeader title="Dashboard" />
-      <main className="flex-1 p-4 lg:p-6 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-headline text-3xl">Crop Disease Diagnosis</CardTitle>
-            <CardDescription>
-              Upload a photo of an affected plant to get an instant AI-powered diagnosis.
-            </CardDescription>
-          </CardHeader>
-          <Form {...diagnosisForm}>
-            <form onSubmit={diagnosisForm.handleSubmit(onDiagnosisSubmit)}>
-              <CardContent className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <FormField
-                    control={diagnosisForm.control}
-                    name="image"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Plant Image</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => {
-                              field.onChange(e.target.files);
-                              handleImageChange(e);
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="aspect-video w-full relative overflow-hidden rounded-lg border-2 border-dashed flex items-center justify-center bg-muted/50">
-                    {preview ? (
-                      <Image
-                        src={preview}
-                        alt="Plant preview"
-                        fill
-                        style={{ objectFit: 'contain' }}
-                      />
-                    ) : (
-                      uploadPlaceholder && (
-                        <Image
-                          src={uploadPlaceholder.imageUrl}
-                          alt={uploadPlaceholder.description}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                          className="opacity-50"
-                          data-ai-hint={uploadPlaceholder.imageHint}
-                        />
-                      )
-                    )}
-                     {!preview && (
-                        <div className="text-center text-muted-foreground z-10 p-4">
-                            <UploadCloud className="mx-auto h-12 w-12" />
-                            <p>Click to upload or drag and drop</p>
-                            <p className="text-xs">PNG, JPG, WEBP up to 5MB</p>
-                        </div>
-                    )}
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative w-full h-[60vh] md:h-[70vh] flex items-center justify-center text-center bg-hero-gradient">
+          <Image
+            src="https://picsum.photos/seed/farmer-field/1800/1000"
+            alt="Farmer in a field"
+            fill
+            className="object-cover opacity-20"
+            data-ai-hint="farmer field"
+          />
+          <div className="relative z-10 p-4 space-y-4">
+            <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight text-primary">
+              Protect Your Crops, Secure Your Harvest
+            </h1>
+            <p className="max-w-2xl mx-auto text-lg md:text-xl text-muted-foreground">
+              AI-powered disease detection and management for smallholder farmers.
+            </p>
+            <Button asChild size="lg" className="text-lg py-6 px-8">
+              <Link href="/detect">
+                Scan Your Crop Now <ArrowRight className="ml-2" />
+              </Link>
+            </Button>
+          </div>
+        </section>
+
+        {/* Explanation Cards Section */}
+        <section className="py-12 md:py-24 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader>
+                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
+                    <Leaf className="w-10 h-10 text-primary" />
                   </div>
-                </div>
-                <div className="flex flex-col space-y-4">
-                  {isDiagnosing && (
-                    <div className="flex flex-col items-center justify-center h-full space-y-4 text-center">
-                      <Loader2 className="h-16 w-16 animate-spin text-primary" />
-                      <p className="font-semibold text-lg">Analyzing your crop...</p>
-                      <p className="text-muted-foreground">
-                        Our AI is hard at work. This should only take a moment.
-                      </p>
-                    </div>
-                  )}
-
-                  {!isDiagnosing && diagnosis && (
-                    <Card className="flex-1">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2 font-headline">
-                          <HeartPulse />
-                          Diagnosis Result
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {diagnosis.confidenceScore > 0 ? (
-                          <>
-                            <div>
-                              <Label>Detected Disease</Label>
-                              <p className="text-2xl font-bold text-destructive">
-                                {diagnosis.diseaseName}
-                              </p>
-                            </div>
-                            <div>
-                              <Label>Confidence Score</Label>
-                              <div className="flex items-center gap-2">
-                                <Progress value={diagnosis.confidenceScore * 100} className="w-full" />
-                                <span className="font-bold text-primary">
-                                  {Math.round(diagnosis.confidenceScore * 100)}%
-                                </span>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                           <div className="flex flex-col items-center justify-center text-center space-y-2 py-8">
-                                <Leaf className="h-12 w-12 text-primary"/>
-                                <p className="text-xl font-bold">Plant Appears Healthy</p>
-                                <p className="text-muted-foreground">No disease was detected. Keep up the great work!</p>
-                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {!isDiagnosing && error && (
-                    <div className="flex flex-col items-center justify-center h-full space-y-4 text-center text-destructive">
-                      <AlertTriangle className="h-16 w-16" />
-                      <p className="font-semibold text-lg">Diagnosis Failed</p>
-                      <p>{error}</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Button type="submit" disabled={!preview || isDiagnosing}>
-                  {isDiagnosing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Diagnosing...
-                    </>
-                  ) : (
-                    "Diagnose Plant"
-                  )}
-                </Button>
-              </CardFooter>
-            </form>
-          </Form>
-        </Card>
-
-        {diagnosis && diagnosis.confidenceScore > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline flex items-center gap-2">
-                <Syringe /> Get Localized Treatment Advice
-              </CardTitle>
-              <CardDescription>
-                Provide your crop type and region for tailored recommendations.
-              </CardDescription>
-            </CardHeader>
-            <Form {...treatmentForm}>
-              <form onSubmit={treatmentForm.handleSubmit(onTreatmentSubmit)}>
-                <CardContent className="grid sm:grid-cols-2 gap-4">
-                  <FormField
-                    control={treatmentForm.control}
-                    name="crop"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Crop Type</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Tomato, Corn" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={treatmentForm.control}
-                    name="region"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Geographic Region</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., Central Valley, California" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <CardTitle className="font-headline text-2xl mt-4">Detect Disease</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Upload a photo of your crop to instantly identify diseases with AI-driven accuracy.
+                  </p>
                 </CardContent>
-                <CardFooter>
-                  <Button type="submit" disabled={isTreating}>
-                    {isTreating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Advice...
-                      </>
-                    ) : (
-                      "Get Treatment Plan"
-                    )}
-                  </Button>
-                </CardFooter>
-              </form>
-            </Form>
-          </Card>
-        )}
-
-        {isTreating && (
-          <Card>
-            <CardContent className="p-6 flex flex-col items-center justify-center h-48 space-y-4 text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="font-semibold text-lg">Generating your custom treatment plan...</p>
-              <p className="text-muted-foreground">
-                We're consulting our digital agronomist.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {treatment && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline">Recommended Treatment</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                {treatment.treatmentAdvice.split('\n').map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </Card>
+              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader>
+                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
+                    <Map className="w-10 h-10 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl mt-4">Get Local Guidance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Receive tailored remedies and eco-friendly tips based on your region and crop type.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader>
+                  <div className="mx-auto bg-primary/10 rounded-full p-4 w-20 h-20 flex items-center justify-center">
+                    <Bell className="w-10 h-10 text-primary" />
+                  </div>
+                  <CardTitle className="font-headline text-2xl mt-4">Stay Updated</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Get timely weather forecasts and pest alerts to protect your farm proactively.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
       </main>
+
+      {/* Footer */}
+      <footer className="bg-secondary border-t">
+        <div className="container mx-auto py-8 px-4 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
+            <div className="text-center md:text-left">
+                <p>Contact Us: help@cropsafe.ai | Helpline: +1-800-FARM-AID</p>
+                <p>&copy; {new Date().getFullYear()} CropSafe AI. All Rights Reserved.</p>
+            </div>
+            <div className="flex items-center gap-4 mt-4 md:mt-0">
+                <Link href="/resources" className="hover:text-primary">Resources</Link>
+                <select className="bg-background border border-border rounded-md px-2 py-1">
+                    <option>English</option>
+                    <option>Swahili</option>
+                    <option>Hindi</option>
+                </select>
+            </div>
+        </div>
+      </footer>
     </div>
   );
 }
